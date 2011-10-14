@@ -1,5 +1,5 @@
-#include <QtGui/QApplication>
 #include <QTextCodec>
+#include <QtGui/QApplication>
 
 #include "mainwindow.h"
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName("VŠCHT");
 
     MainWindow w;
-    w.show();
+    w.startApp();
 
     return a.exec();
 }

@@ -9,14 +9,18 @@ QT       += core gui
 TARGET = Seebeck
 TEMPLATE = app
 
+LIBS += -L../QSCPIDev -lQSCPIDev
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     experiment.cpp \
-    config.cpp
+    config.cpp \
+    configui.cpp
 
 HEADERS  += mainwindow.h \
     experiment.h \
-    config.h
+    config.h \
+    configui.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    configui.ui
