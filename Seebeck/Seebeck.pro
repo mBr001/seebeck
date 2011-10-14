@@ -12,9 +12,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    experiment.cpp
+    experiment.cpp \
+    config.cpp
 
 HEADERS  += mainwindow.h \
-    experiment.h
+    experiment.h \
+    config.h
 
 FORMS    += mainwindow.ui
