@@ -2,16 +2,6 @@
 
 const double Experiment::timerDwell = 1000;
 
-
-// TODO:
-// - timmer for experiment timing
-// - time handling function with switch()
-// - events for state changes
-// - events for measurement
-// - parameters seting functions
-
-// - configuration class
-
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
     state(STATE_STOP),
@@ -68,8 +58,6 @@ bool Experiment::open_00(const QString &eurothermPort,
                          const QString &msdpPort,
                          const QString &dataDir)
 {
-    // TODO
-
     if (!hp34970.open(hp34970Port)) {
         emit fatalError("Open HP34970 failed", hp34970.errorStr());
         return false;
@@ -81,5 +69,9 @@ bool Experiment::open_00(const QString &eurothermPort,
         return false;
     }
 
+    // TODO: otevřít eurotherm
+    // otevřít soubor pro logování
+    //  - vložit hlavičku
+    //  - pojmenovat podle data
     return false;
 }
