@@ -19,14 +19,21 @@ public:
     ~MainWindow();
     void startApp();
 
+protected:
+    void close();
+
 private:
-    Ui::MainWindow *ui;
     Config config;
     ConfigUI configUI;
+    Experiment experiment;
+    Ui::MainWindow *ui;
 
 public slots:
     void closeEvent(QCloseEvent *event);
     void show();
+
+private slots:
+    void on_experiment_fatalError(const QString &errorShort, const QString &errorLong);
 };
 
 #endif // MAINWINDOW_H

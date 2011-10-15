@@ -26,6 +26,11 @@ Experiment::Experiment(QObject *parent) :
     QMetaObject::connectSlotsByName(this);
 }
 
+void Experiment::close()
+{
+
+}
+
 void Experiment::doCoolDown()
 {
     // set target to lovest posible/defined
@@ -56,4 +61,9 @@ void Experiment::on_timer_timeout()
     case STATE_STOP:
         doStop(); break;
     }
+}
+
+bool Experiment::open()
+{
+    return false;
 }

@@ -14,6 +14,8 @@ public:
     double furnaceT();
     double sampleHeatI();
 
+    void close();
+    bool open();
     void setFurnaceT(double T, double straggling = NAN);
     void setFurnaceTStraggling(double straggling);
     void setFurnaceStabilizationTime(double t);
@@ -47,6 +49,8 @@ private:
     void doStop();
 
 signals:
+    void fatalError(const QString &errorShort, const QString &errorLong);
+
     void furnaceTMeasured(double T);
     void furnaceTStateChanged(bool stabilized);
 
