@@ -75,5 +75,11 @@ bool Experiment::open_00(const QString &eurothermPort,
         return false;
     }
 
+    int err(sdp_open(&sdp, msdpPort.toLocal8Bit().constData(), SDP_DEV_ADDR_MIN));
+    if (err != SDP_EOK) {
+        emit fatalError("SDP PS open failes.", sdp_strerror(err));
+        return false;
+    }
+
     return false;
 }

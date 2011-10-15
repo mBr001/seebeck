@@ -42,6 +42,7 @@ protected:
     State_t state;
 
     QSCPIDev hp34970;
+    sdp_t sdp;
     /** Timer for measurement. */
     QTimer timer;
     /** Timing for timer. */
