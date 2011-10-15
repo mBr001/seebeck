@@ -63,7 +63,12 @@ void Experiment::on_timer_timeout()
     }
 }
 
-bool Experiment::open()
+bool Experiment::open_00(const QString &eurothermPort,
+                         const QString &hp34970Port,
+                         const QString &msdpPort,
+                         const QString &dataDir)
 {
+    // TODO
+
     return false;
 }

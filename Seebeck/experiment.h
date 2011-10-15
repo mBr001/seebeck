@@ -15,7 +15,11 @@ public:
     double sampleHeatI();
 
     void close();
-    bool open();
+    // When changing prototype, change numeric suffix.
+    // This is simple hack to keep definition clear even for function
+    // which takes as parameters jus bunch of strings.
+    bool open_00(const QString &eurothermPort, const QString &hp34970Port,
+              const QString &msdpPort, const QString &dataDir);
     void setFurnaceT(double T, double straggling = NAN);
     void setFurnaceTStraggling(double straggling);
     void setFurnaceStabilizationTime(double t);

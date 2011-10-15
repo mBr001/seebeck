@@ -52,7 +52,11 @@ void MainWindow::on_experiment_fatalError(const QString &errorShort, const QStri
 
 void MainWindow::show()
 {
-    if (!experiment.open()) {
+    if (!experiment.open_00(
+                config.eurothermPort(),
+                config.hp34970Port(),
+                config.msdpPort(),
+                config.dataDir())) {
         close();
         return;
     }
