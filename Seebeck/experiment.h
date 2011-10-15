@@ -1,9 +1,13 @@
 #ifndef EXPERIMENT_H
 #define EXPERIMENT_H
 
-#include "math.h"
+#include <math.h>
 #include <QObject>
 #include <QTimer>
+
+#include "../msdptool/src/include/msdp2xxx.h"
+#include "../QSCPIDev/qscpidev.h"
+#include "../QCSVWriter/qcsvwriter.h"
 
 class Experiment : public QObject
 {
@@ -37,6 +41,7 @@ protected:
     } State_t;
     State_t state;
 
+    QSCPIDev hp34970;
     /** Timer for measurement. */
     QTimer timer;
     /** Timing for timer. */

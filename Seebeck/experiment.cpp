@@ -70,5 +70,10 @@ bool Experiment::open_00(const QString &eurothermPort,
 {
     // TODO
 
+    if (!hp34970.open(hp34970Port)) {
+        emit fatalError("Open HP34970 failed", hp34970.errorStr());
+        return false;
+    }
+
     return false;
 }
