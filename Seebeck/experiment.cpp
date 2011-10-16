@@ -4,7 +4,7 @@ const double Experiment::timerDwell = 1000;
 
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
-    dataLog(COLUMN_END),
+    dataLog(COL_END),
     state(STATE_STOP),
     timer(this),
     furnaceWantedTf(NAN),
@@ -78,7 +78,19 @@ bool Experiment::open_00(const QString &eurothermPort,
         emit fatalError("Failed to open data log file", dataLog.errorString());
         return false;
     }
-    dataLog.setAt(COLUMN_TIME, "Time");
+    dataLog.setAt(COL_TIME, "Time\n(UTC)");
+    dataLog.setAt(COL_STATE, "State\n");
+    dataLog.setAt(COL_FURNACE_T, "Furnace T\n(°C)");
+    dataLog.setAt(COL_SAMPLE_T1, "Sample T1\n(°C)");
+    dataLog.setAt(COL_SAMPLE_T2, "Sample T\n(°C)");
+    dataLog.setAt(COL_SAMPLE_T3, "Sample T\n(°C)");
+    dataLog.setAt(COL_SAMPLE_T4, "Sample T\n(°C)");
+    dataLog.setAt(COL_SAMPLE_HEAT_I, "Heat I\n(A)");
+    dataLog.setAt(COL_SAMPLE_HEAT_U, "Heat U\n(V)");
+    dataLog.setAt(COL_SAMPLE_U12, "Sample U12\n(V)");
+    dataLog.setAt(COL_SAMPLE_U23, "Sample U23\n(V)");
+    dataLog.setAt(COL_SAMPLE_U34, "Sample U34\n(V)");
+    dataLog.setAt(COL_SAMPLE_U41, "Sample U41\n(V)");
 
     // TODO: otevřít eurotherm
 

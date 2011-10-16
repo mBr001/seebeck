@@ -36,9 +36,25 @@ public:
 private:
     /** Column identifiers for data log CSV file. */
     typedef enum {
-        COLUMN_TIME = 0,
-        COLUMN_END
+        COL_TIME = 0,
+        COL_STATE,
+        COL_FURNACE_T,
+        COL_SAMPLE_T1,
+        COL_SAMPLE_T2,
+        COL_SAMPLE_T3,
+        COL_SAMPLE_T4,
+        COL_SAMPLE_HEAT_I,
+        COL_SAMPLE_HEAT_U,
+        COL_SAMPLE_U12,
+        COL_SAMPLE_U23,
+        COL_SAMPLE_U34,
+        COL_SAMPLE_U41,
+        // not a real column, define number of columns
+        COL_END
     } CsvLogColumns_t;
+
+    // TODO: file to save experiment settings
+    // (CSV, to catch variation during time)
 
     /** Current state of experiment. */
     typedef enum {
