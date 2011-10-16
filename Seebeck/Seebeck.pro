@@ -17,12 +17,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     experiment.cpp \
     config.cpp \
-    configui.cpp
+    configui.cpp \
+    qeurotherm.cpp
 
 HEADERS  += mainwindow.h \
     experiment.h \
     config.h \
-    configui.h
+    configui.h \
+    qeurotherm.h
 
 FORMS    += mainwindow.ui \
     configui.ui
