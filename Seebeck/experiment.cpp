@@ -36,7 +36,31 @@ void Experiment::doCoolDown()
 
 void Experiment::doStabilize()
 {
-    // report
+    double T(eurotherm.currentT());
+    dataLog.setAt(COL_TIME, QDateTime::currentDateTimeUtc());
+    dataLog.setAt(COL_FURNACE_T, T);
+    if (!dataLog.write()) {
+       } // TODO
+    emit furnaceTMeasured(T);
+
+    if ( fabs(T - params.furnaceT) < params.furnaceTStraggling) {
+        furnaceStableTime += timerDwell;
+        if (furnaceStableTime < params.furnaceSteadyTime)
+            return;
+    }
+    else {
+        furnaceStableTime = 0;
+        return;
+    }
+
+    QStringList values;
+    if (!hp34970.read(&values)) {
+    } // TODO
+
+    // parse values
+    // write to log
+    // emit signals
+    // if enought measurement done emit finished
 }
 
 void Experiment::doStop()
@@ -139,6 +163,7 @@ bool Experiment::start(const Params_t &params)
 
     state = STATE_STABILIZE;
     this->params = params;
+    furnaceStableTime = 0;
 
     if (!eurotherm.setTarget(params.furnaceT))
     {

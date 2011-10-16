@@ -94,6 +94,8 @@ private:
     static const double timerDwell;
 
     Params_t params;
+    /** The period during which furnace temperature is stable. */
+    int furnaceStableTime;
 
     void doCoolDown();
     void doStabilize();
