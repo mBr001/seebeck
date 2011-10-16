@@ -23,7 +23,7 @@ public:
     // This is simple hack to keep definition clear even for function
     // which takes as parameters jus bunch of strings.
     bool open_00(const QString &eurothermPort, const QString &hp34970Port,
-              const QString &msdpPort, const QString &dataDir);
+              const QString &msdpPort, const QString &dataDirName);
     void setFurnaceT(double T, double straggling = NAN);
     void setFurnaceTStraggling(double straggling);
     void setFurnaceStabilizationTime(double t);
@@ -33,22 +33,30 @@ public:
     void start();
     void stop();
 
-protected:
+private:
+    /** Column identifiers for data log CSV file. */
+    typedef enum {
+        COLUMN_TIME = 0,
+        COLUMN_END
+    } CsvLogColumns_t;
+
+    /** Current state of experiment. */
     typedef enum {
         STATE_STOP = 0,
         STATE_STABILIZE,
         STATE_COOLDOWN
     } State_t;
-    State_t state;
 
+    QCSVFileWriter dataLog;
     QSCPIDev hp34970;
     sdp_t sdp;
+
+    State_t state;
     /** Timer for measurement. */
     QTimer timer;
     /** Timing for timer. */
     static const double timerDwell;
 
-private:
     double furnaceWantedTf;
     double furnaceWantedTStragglingf;
     double sampleHeatIf;

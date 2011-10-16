@@ -4,6 +4,7 @@ const double Experiment::timerDwell = 1000;
 
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
+    dataLog(COLUMN_END),
     state(STATE_STOP),
     timer(this),
     furnaceWantedTf(NAN),
@@ -56,7 +57,7 @@ void Experiment::on_timer_timeout()
 bool Experiment::open_00(const QString &eurothermPort,
                          const QString &hp34970Port,
                          const QString &msdpPort,
-                         const QString &dataDir)
+                         const QString &dataDirName)
 {
     if (!hp34970.open(hp34970Port)) {
         emit fatalError("Open HP34970 failed", hp34970.errorStr());
@@ -69,9 +70,17 @@ bool Experiment::open_00(const QString &eurothermPort,
         return false;
     }
 
+    QDir dataDir(dataDirName);
+    QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
+    QString fileName(dateStr + ".csv");
+    dataLog.setFileName(dataDir.absoluteFilePath(fileName));
+    if (!dataLog.open()) {
+        emit fatalError("Failed to open data log file", dataLog.errorString());
+        return false;
+    }
+    dataLog.setAt(COLUMN_TIME, "Time");
+
     // TODO: otevřít eurotherm
-    // otevřít soubor pro logování
-    //  - vložit hlavičku
-    //  - pojmenovat podle data
+
     return false;
 }
