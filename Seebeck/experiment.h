@@ -14,10 +14,22 @@ class Experiment : public QObject
 {
     Q_OBJECT
 public:
-    explicit Experiment(QObject *parent = 0);
+    typedef struct {
+        /** Wanted furnace temperature (°C). */
+        double furnaceT;
 
-    double furnaceT();
-    double sampleHeatI();
+        /** Maximal difference from furnaceT to be system clasified as steady. */
+        double furnaceTStraggling;
+
+        /** If temperature has wanted value for this period, system is
+          * clasicied as stedy. */
+        double furnaceSteadyTime;
+
+        /** Current uset for sample heating. */
+        double sampleI;
+    } Params_t;
+
+    explicit Experiment(QObject *parent = 0);
 
     void close();
     // When changing prototype, change numeric suffix.
@@ -25,13 +37,7 @@ public:
     // which takes as parameters jus bunch of strings.
     bool open_00(const QString &eurothermPort, const QString &hp34970Port,
               const QString &msdpPort, const QString &dataDirName);
-    void setFurnaceT(double T, double straggling = NAN);
-    void setFurnaceTStraggling(double straggling);
-    void setFurnaceStabilizationTime(double t);
-    void setSampleHeatI(double I);
-    void setSampleTStraggling(double straggling);
-    void setSampleStabilizationTime(double t);
-    void start();
+    bool start(const Params_t &params);
     void stop();
 
 private:
@@ -57,6 +63,17 @@ private:
     // TODO: file to save experiment settings
     // (CSV, to catch variation during time)
 
+    typedef enum {
+        HP43970_CH_T1 = 5,
+        HP43970_CH_T2 = 6,
+        HP43970_CH_T3 = 7,
+        HP43970_CH_T4 = 8,
+        HP43970_CH_U14 = 9, // 14 ? 41
+        HP43970_CH_U43 = 10, // 34 ? 43
+        HP43970_CH_U32 = 11, // 32 ? 23
+        HP43970_CH_U12 = 12 // 12 ? 21
+    } Hp43970Channels_t;
+
     /** Current state of experiment. */
     typedef enum {
         STATE_STOP = 0,
@@ -76,10 +93,7 @@ private:
     /** Timing for timer. */
     static const double timerDwell;
 
-    double furnaceWantedTf;
-    double furnaceWantedTStragglingf;
-    double sampleHeatIf;
-    double sampleTStragglingf;
+    Params_t params;
 
     void doCoolDown();
     void doStabilize();
@@ -91,7 +105,6 @@ signals:
     void finished();
 
     void furnaceTMeasured(double T);
-
     void sampleTMeasured(double T1, double T2, double T3, double T4);
     void sampleUMeasured(double U12, double U23, double U34, double U41);
 

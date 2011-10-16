@@ -30,7 +30,7 @@ bool QEurotherm::setTarget(double)
     return false;
 }
 
-bool QEurotherm::setProgram(bool enabled)
+bool QEurotherm::setProgram(bool)
 {
     return false;
 }

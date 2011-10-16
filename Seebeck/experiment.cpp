@@ -1,4 +1,7 @@
+#include <math.h>
+
 #include "experiment.h"
+
 
 const double Experiment::timerDwell = 1000;
 
@@ -6,9 +9,7 @@ Experiment::Experiment(QObject *parent) :
     QObject(parent),
     dataLog(COL_END),
     state(STATE_STOP),
-    timer(this),
-    furnaceWantedTf(NAN),
-    sampleHeatIf(NAN)
+    timer(this)
 {
     timer.setObjectName("timer");
     timer.setInterval(timerDwell);
@@ -125,24 +126,34 @@ bool Experiment::open_00(const QString &eurothermPort,
     return false;
 }
 
-void Experiment::start()
+bool Experiment::start(const Params_t &params)
 {
-    state = STATE_STABILIZE;
+    if (params.furnaceSteadyTime <= 0 || !isfinite(params.furnaceSteadyTime)
+            || params.furnaceT <= 0 || !isfinite(params.furnaceT)
+            || params.furnaceTStraggling <= 0 || !isfinite(params.furnaceTStraggling)
+            || params.sampleI <= 0 || !isfinite(params.sampleI)) {
+        // TODO: report error (zavést error() a errorStrinf() ?)
+        return false;
+    }
 
-    if (!eurotherm.setTarget(furnaceWantedTf))
+
+    state = STATE_STABILIZE;
+    this->params = params;
+
+    if (!eurotherm.setTarget(params.furnaceT))
     {
-        emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
-        return;
+        //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
+        return false;
     }
     if (!eurotherm.setProgram(true))
     {
-        emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
-        return;
+        //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
+        return false;
     }
 
     int sdp_ret;
 
-    sdp_ret = sdp_set_curr(&sdp, sampleHeatIf);
+    sdp_ret = sdp_set_curr(&sdp, params.sampleI);
     if (sdp_ret != SDP_EOK)
         goto sdp_err;
     sdp_ret = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
@@ -155,11 +166,13 @@ void Experiment::start()
     if (sdp_ret != SDP_EOK)
         goto sdp_err;
 
-    return;
+    return true;
 
 sdp_err:
     emit fatalError("Failed to set up SDP PS", sdp_strerror(sdp_ret));
     stop();
+
+    return false;
 }
 
 void Experiment::stop()
