@@ -66,6 +66,7 @@ private:
     QCSVFileWriter dataLog;
     QSCPIDev hp34970;
     sdp_t sdp;
+    sdp_va_t sdp_va_maximums;
 
     State_t state;
     /** Timer for measurement. */
@@ -84,12 +85,13 @@ private:
 
 signals:
     void fatalError(const QString &errorShort, const QString &errorLong);
+    /** Called at end of experiment, after completion all measurements. */
+    void finished();
 
     void furnaceTMeasured(double T);
-    void furnaceTStateChanged(bool stabilized);
 
     void sampleTMeasured(double T1, double T2, double T3, double T4);
-    void sampleTStateChanged(bool stabilized);
+    void sampleUMeasured(double U12, double U23, double U34, double U41);
 
 private slots:
     void on_timer_timeout();

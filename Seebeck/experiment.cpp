@@ -19,18 +19,22 @@ Experiment::Experiment(QObject *parent) :
 
 void Experiment::close()
 {
-
+    // TODO is expefriment running? -> stop
+    timer.stop();
+    sdp_close(&sdp);
+    hp34970.close();
+    dataLog.close();
 }
 
 void Experiment::doCoolDown()
 {
     // set target to lovest posible/defined
-// report furnace and sample T
+    // report furnace and sample T
 }
 
 void Experiment::doStabilize()
 {
-// report
+    // report
 }
 
 void Experiment::doStop()
@@ -59,22 +63,33 @@ bool Experiment::open_00(const QString &eurothermPort,
                          const QString &msdpPort,
                          const QString &dataDirName)
 {
+    int sdp_ret(sdp_open(&sdp, msdpPort.toLocal8Bit().constData(), SDP_DEV_ADDR_MIN));
+    if (sdp_ret != SDP_EOK) {
+        emit fatalError("SDP PS open failes.", sdp_strerror(sdp_ret));
+        return false;
+    }
+    sdp_ret = sdp_get_va_maximums(&sdp, &sdp_va_maximums);
+    if (sdp_ret != SDP_EOK) {
+        sdp_close(&sdp);
+        emit fatalError("SDP PS open failes.", sdp_strerror(sdp_ret));
+        return false;
+    }
+
     if (!hp34970.open(hp34970Port)) {
+        sdp_close(&sdp);
         emit fatalError("Open HP34970 failed", hp34970.errorStr());
         return false;
     }
 
-    int err(sdp_open(&sdp, msdpPort.toLocal8Bit().constData(), SDP_DEV_ADDR_MIN));
-    if (err != SDP_EOK) {
-        emit fatalError("SDP PS open failes.", sdp_strerror(err));
-        return false;
-    }
+    // TODO: configure HP34970
 
     QDir dataDir(dataDirName);
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
     QString fileName(dateStr + ".csv");
     dataLog.setFileName(dataDir.absoluteFilePath(fileName));
     if (!dataLog.open()) {
+        sdp_close(&sdp);
+        hp34970.close();
         emit fatalError("Failed to open data log file", dataLog.errorString());
         return false;
     }
@@ -94,5 +109,42 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     // TODO: otevřít eurotherm
 
+    timer.start();
+
     return false;
+}
+
+void Experiment::start()
+{
+    state = STATE_STABILIZE;
+    // TODO: setup equipment
+    //  - set eurotherm target T
+    //  - start regulation on eurotherm
+
+    int sdp_ret;
+
+    sdp_ret = sdp_set_curr(&sdp, sampleHeatIf);
+    if (sdp_ret != SDP_EOK)
+        goto sdp_err;
+    sdp_ret = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
+    if (sdp_ret != SDP_EOK)
+        goto sdp_err;
+    sdp_ret = sdp_set_volt(&sdp, sdp_va_maximums.volt);
+    if (sdp_ret != SDP_EOK)
+        goto sdp_err;
+    sdp_ret = sdp_set_output(&sdp, 1);
+    if (sdp_ret != SDP_EOK)
+        goto sdp_err;
+
+    return;
+
+sdp_err:
+    emit fatalError("Failed to set up SDP PS", sdp_strerror(sdp_ret));
+    stop();
+}
+
+void Experiment::stop()
+{
+    // TODO: shut down eurotherm
+    sdp_set_output(&sdp, 0);
 }
