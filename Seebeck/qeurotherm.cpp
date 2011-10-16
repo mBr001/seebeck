@@ -10,6 +10,16 @@ void QEurotherm::close()
 
 }
 
+double QEurotherm::currentT()
+{
+    return -300;
+}
+
+QString QEurotherm::errorString()
+{
+    return "FIXME";
+}
+
 bool QEurotherm::open(const QString &, int)
 {
     return false;

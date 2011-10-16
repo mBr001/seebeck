@@ -10,6 +10,8 @@ public:
     explicit QEurotherm(QObject *parent = 0);
 
     void close();
+    double currentT();
+    QString errorString();
     bool open(const QString &port, int addr);
     bool setTarget(double T);
     bool setProgram(bool enabled);

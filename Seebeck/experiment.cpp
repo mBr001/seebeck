@@ -23,6 +23,7 @@ void Experiment::close()
     timer.stop();
     sdp_close(&sdp);
     hp34970.close();
+    eurotherm.close();
     dataLog.close();
 }
 
@@ -83,6 +84,15 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     // TODO: configure HP34970
 
+    if (!eurotherm.open(eurothermPort, -1)) {
+        sdp_close(&sdp);
+        hp34970.close();
+        emit fatalError("Failed to open Eurotherm regulator.", eurotherm.errorString());
+        return false;
+    }
+
+    // TODO: setup eurotherm to defined state
+
     QDir dataDir(dataDirName);
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
     QString fileName(dateStr + ".csv");
@@ -90,6 +100,7 @@ bool Experiment::open_00(const QString &eurothermPort,
     if (!dataLog.open()) {
         sdp_close(&sdp);
         hp34970.close();
+        eurotherm.close();
         emit fatalError("Failed to open data log file", dataLog.errorString());
         return false;
     }
@@ -117,9 +128,17 @@ bool Experiment::open_00(const QString &eurothermPort,
 void Experiment::start()
 {
     state = STATE_STABILIZE;
-    // TODO: setup equipment
-    //  - set eurotherm target T
-    //  - start regulation on eurotherm
+
+    if (!eurotherm.setTarget(furnaceWantedTf))
+    {
+        emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
+        return;
+    }
+    if (!eurotherm.setProgram(true))
+    {
+        emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
+        return;
+    }
 
     int sdp_ret;
 
@@ -145,6 +164,6 @@ sdp_err:
 
 void Experiment::stop()
 {
-    // TODO: shut down eurotherm
     sdp_set_output(&sdp, 0);
+    eurotherm.setProgram(false);
 }

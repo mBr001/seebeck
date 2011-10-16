@@ -8,6 +8,7 @@
 #include "../msdptool/src/include/msdp2xxx.h"
 #include "../QSCPIDev/qscpidev.h"
 #include "../QCSVWriter/qcsvwriter.h"
+#include "qeurotherm.h"
 
 class Experiment : public QObject
 {
@@ -64,6 +65,7 @@ private:
     } State_t;
 
     QCSVFileWriter dataLog;
+    QEurotherm eurotherm;
     QSCPIDev hp34970;
     sdp_t sdp;
     sdp_va_t sdp_va_maximums;
