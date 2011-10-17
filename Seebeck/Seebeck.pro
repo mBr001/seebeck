@@ -9,9 +9,11 @@ QT       += core gui
 TARGET = Seebeck
 TEMPLATE = app
 
-LIBS += -L../msdptool/build -lmsdptool \
+LIBS +=  \
+    -L../msdptool/build -lmsdptool \
     -L../QCSVWriter -lQCSVWriter \
-    -L../QSCPIDev -lQSCPIDev
+    -L../QSCPIDev -lQSCPIDev \
+    -lm
 
 SOURCES += main.cpp\
         mainwindow.cpp \
