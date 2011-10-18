@@ -13,20 +13,24 @@ LIBS +=  \
     -L../msdptool/build -lmsdptool \
     -L../QCSVWriter -lQCSVWriter \
     -L../QSCPIDev -lQSCPIDev \
-    -lm
+    -lm -lmodbus
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     experiment.cpp \
     config.cpp \
     configui.cpp \
-    qeurotherm.cpp
+    qmodbus.cpp
 
 HEADERS  += mainwindow.h \
     experiment.h \
     config.h \
     configui.h \
-    qeurotherm.h
+    qmodbus.h
 
 FORMS    += mainwindow.ui \
     configui.ui
+
+OTHER_FILES += \
+    ../README \
+    ../INSTALL.txt

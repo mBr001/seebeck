@@ -8,7 +8,7 @@
 #include "../msdptool/src/include/msdp2xxx.h"
 #include "../QSCPIDev/qscpidev.h"
 #include "../QCSVWriter/qcsvwriter.h"
-#include "qeurotherm.h"
+#include "qmodbus.h"
 
 class Experiment : public QObject
 {

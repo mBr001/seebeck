@@ -1,0 +1,5 @@
+
+== dependencies ==
+
+libmodbus >= 3.0.1 (http://www.libmodbus.org)
+
