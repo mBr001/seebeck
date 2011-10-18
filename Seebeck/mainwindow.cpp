@@ -50,6 +50,11 @@ void MainWindow::on_experiment_fatalError(const QString &errorShort, const QStri
     close();
 }
 
+void MainWindow::on_experiment_furnaceTMeasured(int T)
+{
+    ui->furnaceTSpinBox->setValue(T);
+}
+
 void MainWindow::show()
 {
     if (!experiment.open_00(

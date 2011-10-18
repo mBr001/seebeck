@@ -4,7 +4,7 @@
 #include <QObject>
 #include <modbus/modbus.h>
 
-class QEurotherm : public QObject
+class QModBus : public QObject
 {
     Q_OBJECT
 public:
@@ -15,15 +15,15 @@ public:
         ESLAVE
     } Error_t;
 
-    explicit QEurotherm(QObject *parent = 0);
-    ~QEurotherm();
+    explicit QModBus(QObject *parent = 0);
+    ~QModBus();
 
     void close();
-    double currentT();
+    int currentT();
     Error_t error() const;
     QString errorString() const;
     bool open(const QString &port, int addr);
-    bool setTarget(double T);
+    bool setTarget(int T);
     bool setProgram(bool enabled);
 
 private:

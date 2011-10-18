@@ -36,7 +36,7 @@ void Experiment::doCoolDown()
 
 void Experiment::doStabilize()
 {
-    double T(eurotherm.currentT());
+    int T(eurotherm.currentT());
     dataLog.setAt(COL_TIME, QDateTime::currentDateTimeUtc());
     dataLog.setAt(COL_FURNACE_T, T);
     if (!dataLog.write()) {

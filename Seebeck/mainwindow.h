@@ -34,6 +34,7 @@ public slots:
 
 private slots:
     void on_experiment_fatalError(const QString &errorShort, const QString &errorLong);
+    void on_experiment_furnaceTMeasured(int T);
 };
 
 #endif // MAINWINDOW_H

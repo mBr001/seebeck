@@ -1,17 +1,17 @@
 #include "qmodbus.h"
 
-QEurotherm::QEurotherm(QObject *parent) :
+QModBus::QModBus(QObject *parent) :
     QObject(parent),
     dev(NULL)
 {
 }
 
-QEurotherm::~QEurotherm()
+QModBus::~QModBus()
 {
     close();
 }
 
-void QEurotherm::close()
+void QModBus::close()
 {
     if (dev != NULL) {
         modbus_free(dev);
@@ -19,17 +19,20 @@ void QEurotherm::close()
     }
 }
 
-double QEurotherm::currentT()
+int QModBus::currentT()
 {
-    return -300;
+    uint16_t dest;
+    modbus_read_registers(dev, 1, 1, &dest);
+
+    return dest;
 }
 
-QEurotherm::Error_t QEurotherm::error() const
+QModBus::Error_t QModBus::error() const
 {
     return err;
 }
 
-QString QEurotherm::errorString() const
+QString QModBus::errorString() const
 {
     switch(err) {
     case EOK:
@@ -49,7 +52,7 @@ QString QEurotherm::errorString() const
     }
 }
 
-bool QEurotherm::open(const QString &port, int slave)
+bool QModBus::open(const QString &port, int slave)
 {
     err = EOK;
     dev = modbus_new_rtu(port.toLocal8Bit().constData(), 9600, 'N', 8, 1);
@@ -57,6 +60,7 @@ bool QEurotherm::open(const QString &port, int slave)
         err = ENEW;
         return false;
     }
+
     if (modbus_connect(dev) == -1)
     {
         err = ECONNECT;
@@ -71,12 +75,12 @@ bool QEurotherm::open(const QString &port, int slave)
     return true;
 }
 
-bool QEurotherm::setTarget(double)
+bool QModBus::setTarget(int)
 {
     return false;
 }
 
-bool QEurotherm::setProgram(bool)
+bool QModBus::setProgram(bool)
 {
     return false;
 }

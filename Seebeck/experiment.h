@@ -83,7 +83,7 @@ private:
     } State_t;
 
     QCSVFileWriter dataLog;
-    QEurotherm eurotherm;
+    QModBus eurotherm;
     QSCPIDev hp34970;
     sdp_t sdp;
     sdp_va_t sdp_va_maximums;
@@ -107,9 +107,9 @@ signals:
     /** Called at end of experiment, after completion all measurements. */
     void finished();
 
-    void furnaceTMeasured(double T);
-    void sampleTMeasured(double T1, double T2, double T3, double T4);
-    void sampleUMeasured(double U12, double U23, double U34, double U41);
+    void furnaceTMeasured(int T);
+    void sampleTMeasured(int T1, int T2, int T3, int T4);
+    void sampleUMeasured(int U12, int U23, int U34, int U41);
 
 private slots:
     void on_timer_timeout();
