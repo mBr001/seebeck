@@ -2,6 +2,7 @@
 
 const char Config::str_data_dir[] = "data dir";
 const char Config::str_eurotherm_port[] = "eurother port";
+const char Config::str_eurotherm_slave[] = "eurother slave";
 const char Config::str_hp34970_port[] = "hp34970 port";
 const char Config::str_msdp_port[] = "msdp port";
 
@@ -17,6 +18,11 @@ QString Config::dataDir()
 QString Config::eurothermPort()
 {
     return settings.value(str_eurotherm_port).toString();
+}
+
+int Config::eurothermSlave()
+{
+    return settings.value(str_eurotherm_slave).toInt();
 }
 
 QString Config::hp34970Port()
@@ -37,6 +43,11 @@ void Config::setDataDir(const QString &dirName)
 void Config::setEurothermPort(const QString &port)
 {
     settings.setValue(str_eurotherm_port, port);
+}
+
+void Config::setEurothermSlave(int slave)
+{
+    settings.setValue(str_eurotherm_slave, slave);
 }
 
 void Config::setHp34970Port(const QString &port)

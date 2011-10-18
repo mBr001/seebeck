@@ -85,6 +85,7 @@ void Experiment::on_timer_timeout()
 }
 
 bool Experiment::open_00(const QString &eurothermPort,
+                         int eurothermSlave,
                          const QString &hp34970Port,
                          const QString &msdpPort,
                          const QString &dataDirName)
@@ -109,7 +110,7 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     // TODO: configure HP34970
 
-    if (!eurotherm.open(eurothermPort, -1)) {
+    if (!eurotherm.open(eurothermPort, eurothermSlave)) {
         sdp_close(&sdp);
         hp34970.close();
         emit fatalError("Failed to open Eurotherm regulator.", eurotherm.errorString());

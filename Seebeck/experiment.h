@@ -35,8 +35,9 @@ public:
     // When changing prototype, change numeric suffix.
     // This is simple hack to keep definition clear even for function
     // which takes as parameters jus bunch of strings.
-    bool open_00(const QString &eurothermPort, const QString &hp34970Port,
-              const QString &msdpPort, const QString &dataDirName);
+    bool open_00(const QString &eurothermPort, int eurothermSlave,
+                 const QString &hp34970Port, const QString &msdpPort,
+                 const QString &dataDirName);
     bool start(const Params_t &params);
     void stop();
 

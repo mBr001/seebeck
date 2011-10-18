@@ -54,6 +54,7 @@ void MainWindow::show()
 {
     if (!experiment.open_00(
                 config.eurothermPort(),
+                config.eurothermSlave(),
                 config.hp34970Port(),
                 config.msdpPort(),
                 config.dataDir())) {

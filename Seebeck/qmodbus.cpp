@@ -41,12 +41,15 @@ QString QEurotherm::errorString() const
     case ECONNECT:
         return "connect failed";
 
+    case ESLAVE:
+        return "Failed to set slave numer";
+
     default:
         return "FIXME";
     }
 }
 
-bool QEurotherm::open(const QString &port, int)
+bool QEurotherm::open(const QString &port, int slave)
 {
     err = EOK;
     dev = modbus_new_rtu(port.toLocal8Bit().constData(), 9600, 'N', 8, 1);
@@ -59,6 +62,12 @@ bool QEurotherm::open(const QString &port, int)
         err = ECONNECT;
         return false;
     }
+
+    if (modbus_set_slave(dev, slave) == -1) {
+        err = ESLAVE;
+        return false;
+    }
+
     return true;
 }
 

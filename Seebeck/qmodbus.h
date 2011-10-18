@@ -11,7 +11,8 @@ public:
     typedef enum {
         EOK = 0,
         ENEW,
-        ECONNECT
+        ECONNECT,
+        ESLAVE
     } Error_t;
 
     explicit QEurotherm(QObject *parent = 0);
