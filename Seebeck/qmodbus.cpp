@@ -1,18 +1,22 @@
 #include "qmodbus.h"
 
 QEurotherm::QEurotherm(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    dev(NULL)
 {
 }
 
 QEurotherm::~QEurotherm()
 {
-    modbus_free(dev);
+    close();
 }
 
 void QEurotherm::close()
 {
-
+    if (dev != NULL) {
+        modbus_free(dev);
+        dev = NULL;
+    }
 }
 
 double QEurotherm::currentT()
@@ -28,6 +32,9 @@ QEurotherm::Error_t QEurotherm::error() const
 QString QEurotherm::errorString() const
 {
     switch(err) {
+    case EOK:
+        return "No error.";
+
     case ENEW:
         return "modbus_new_rtu failed";
 
@@ -41,6 +48,7 @@ QString QEurotherm::errorString() const
 
 bool QEurotherm::open(const QString &port, int)
 {
+    err = EOK;
     dev = modbus_new_rtu(port.toLocal8Bit().constData(), 9600, 'N', 8, 1);
     if (dev == NULL) {
         err = ENEW;
@@ -51,7 +59,7 @@ bool QEurotherm::open(const QString &port, int)
         err = ECONNECT;
         return false;
     }
-    return false;
+    return true;
 }
 
 bool QEurotherm::setTarget(double)

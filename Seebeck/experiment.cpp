@@ -147,7 +147,7 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     timer.start();
 
-    return false;
+    return true;
 }
 
 bool Experiment::start(const Params_t &params)
