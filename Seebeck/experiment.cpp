@@ -43,9 +43,9 @@ void Experiment::doStabilize()
        } // TODO
     emit furnaceTMeasured(T);
 
-    if ( fabs(T - params.furnaceT) < params.furnaceTStraggling) {
+    if ( fabs(T - paramsf.furnaceT) < paramsf.furnaceTStraggling) {
         furnaceStableTime += timerDwell;
-        if (furnaceStableTime < params.furnaceSteadyTime)
+        if (furnaceStableTime < paramsf.furnaceSteadyTime)
             return;
     }
     else {
@@ -151,6 +151,11 @@ bool Experiment::open_00(const QString &eurothermPort,
     return true;
 }
 
+const Experiment::Params_t& Experiment::params() const
+{
+    return paramsf;
+}
+
 bool Experiment::start(const Params_t &params)
 {
     if (params.furnaceSteadyTime <= 0 || !isfinite(params.furnaceSteadyTime)
@@ -163,7 +168,7 @@ bool Experiment::start(const Params_t &params)
 
 
     state = STATE_STABILIZE;
-    this->params = params;
+    this->paramsf = params;
     furnaceStableTime = 0;
 
     if (!eurotherm.setTarget(params.furnaceT))

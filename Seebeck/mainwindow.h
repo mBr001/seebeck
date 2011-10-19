@@ -35,6 +35,9 @@ public slots:
 private slots:
     void on_experiment_fatalError(const QString &errorShort, const QString &errorLong);
     void on_experiment_furnaceTMeasured(int T);
+    void on_furnaceTWantSpinBox_valueChanged(int arg1);
+    void on_experimentOffRadioButton_clicked();
+    void on_experimentManualRadioButton_clicked();
 };
 
 #endif // MAINWINDOW_H

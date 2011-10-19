@@ -75,3 +75,26 @@ void MainWindow::startApp()
 {
     configUI.show();
 }
+
+void MainWindow::on_furnaceTWantSpinBox_valueChanged(int arg1)
+{
+    Experiment::Params_t params(experiment.params());
+    params.furnaceT = arg1;
+    experiment.start(params);
+}
+
+void MainWindow::on_experimentOffRadioButton_clicked()
+{
+    experiment.stop();
+}
+
+void MainWindow::on_experimentManualRadioButton_clicked()
+{
+    // TODO
+    Experiment::Params_t params;
+    params.furnaceSteadyTime = 0;
+    params.furnaceT = ui->furnaceTWantSpinBox->value();
+    params.furnaceTStraggling = 0;
+    params.sampleI = 0;
+    experiment.start(params);
+}

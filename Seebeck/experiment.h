@@ -38,6 +38,7 @@ public:
     bool open_00(const QString &eurothermPort, int eurothermSlave,
                  const QString &hp34970Port, const QString &msdpPort,
                  const QString &dataDirName);
+    const Params_t& params() const;
     bool start(const Params_t &params);
     void stop();
 
@@ -94,7 +95,7 @@ private:
     /** Timing for timer. */
     static const double timerDwell;
 
-    Params_t params;
+    Params_t paramsf;
     /** The period during which furnace temperature is stable. */
     int furnaceStableTime;
 
