@@ -8,6 +8,7 @@ const double Experiment::timerDwell = 1000;
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
     dataLog(COL_END),
+    paramsf(),
     state(STATE_STOP),
     timer(this)
 {
@@ -144,7 +145,20 @@ bool Experiment::open_00(const QString &eurothermPort,
     dataLog.setAt(COL_SAMPLE_U34, "Sample U34\n(V)");
     dataLog.setAt(COL_SAMPLE_U41, "Sample U41\n(V)");
 
-    // TODO: otevřít eurotherm
+    // TODO: get from device
+    //paramsf.furnacePower = ;
+    //paramsf.furnaceT = ;
+
+    sdp_va_data_t va_data;
+    sdp_ret = sdp_get_va_data(&sdp, &va_data);
+    if (sdp_ret != SDP_EOK) {
+        sdp_close(&sdp);
+        hp34970.close();
+        eurotherm.close();
+        emit fatalError("Failed to get I form PS", sdp_strerror(sdp_ret));
+        return false;
+    }
+    paramsf.sampleI = va_data.curr;
 
     timer.start();
 

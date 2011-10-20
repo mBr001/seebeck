@@ -13,6 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
     experiment.setObjectName("experiment");
     ui->setupUi(this);
     QObject::connect(&configUI, SIGNAL(accepted()), this, SLOT(show()));
+
+    Experiment::Params_t params(experiment.params());
+    // TODO: set-up from config
+    experiment.start(params);
 }
 
 MainWindow::~MainWindow()

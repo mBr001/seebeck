@@ -14,7 +14,11 @@ class Experiment : public QObject
 {
     Q_OBJECT
 public:
-    typedef struct {
+    class Params_t {
+    public:
+        /** Turn furnace power on/off. */
+        bool furnacePower;
+
         /** Wanted furnace temperature (°C). */
         double furnaceT;
 
@@ -27,7 +31,12 @@ public:
 
         /** Current uset for sample heating. */
         double sampleI;
-    } Params_t;
+
+        Params_t() :
+            furnacePower(false), furnaceT(-274),
+            furnaceTStraggling(-1), furnaceSteadyTime(-1), sampleI(-1)
+        {};
+    };
 
     explicit Experiment(QObject *parent = 0);
 
@@ -89,13 +98,14 @@ private:
     sdp_t sdp;
     sdp_va_t sdp_va_maximums;
 
+    Params_t paramsf;
+
     State_t state;
     /** Timer for measurement. */
     QTimer timer;
     /** Timing for timer. */
     static const double timerDwell;
 
-    Params_t paramsf;
     /** The period during which furnace temperature is stable. */
     int furnaceStableTime;
 
