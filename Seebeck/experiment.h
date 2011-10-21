@@ -23,18 +23,18 @@ public:
         double furnaceT;
 
         /** Maximal difference from furnaceT to be system clasified as steady. */
-        double furnaceTStraggling;
+        double furnaceSettleTStraggling;
 
         /** If temperature has wanted value for this period, system is
           * clasicied as stedy. */
-        double furnaceSteadyTime;
+        double furnaceSettleTime;
 
         /** Current uset for sample heating. */
         double sampleI;
 
         Params_t() :
             furnacePower(false), furnaceT(-274),
-            furnaceTStraggling(-1), furnaceSteadyTime(-1), sampleI(-1)
+            furnaceSettleTStraggling(-1), furnaceSettleTime(-1), sampleI(-1)
         {};
     };
 

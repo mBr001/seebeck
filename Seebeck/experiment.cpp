@@ -44,9 +44,9 @@ void Experiment::doStabilize()
        } // TODO
     emit furnaceTMeasured(T);
 
-    if ( fabs(T - paramsf.furnaceT) < paramsf.furnaceTStraggling) {
+    if ( fabs(T - paramsf.furnaceT) < paramsf.furnaceSettleTStraggling) {
         furnaceStableTime += timerDwell;
-        if (furnaceStableTime < paramsf.furnaceSteadyTime)
+        if (furnaceStableTime < paramsf.furnaceSettleTime)
             return;
     }
     else {
@@ -172,9 +172,9 @@ const Experiment::Params_t& Experiment::params() const
 
 bool Experiment::start(const Params_t &params)
 {
-    if (params.furnaceSteadyTime <= 0 || !isfinite(params.furnaceSteadyTime)
+    if (params.furnaceSettleTime <= 0 || !isfinite(params.furnaceSettleTime)
             || params.furnaceT <= 0 || !isfinite(params.furnaceT)
-            || params.furnaceTStraggling <= 0 || !isfinite(params.furnaceTStraggling)
+            || params.furnaceSettleTStraggling <= 0 || !isfinite(params.furnaceSettleTStraggling)
             || params.sampleI <= 0 || !isfinite(params.sampleI)) {
         // TODO: report error (zavést error() a errorStrinf() ?)
         return false;

@@ -64,8 +64,8 @@
      <rect>
       <x>150</x>
       <y>10</y>
-      <width>162</width>
-      <height>84</height>
+      <width>181</width>
+      <height>171</height>
      </rect>
     </property>
     <property name="title">
@@ -113,6 +113,40 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="furnaceSettleTimeSpinBox"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_19">
+       <property name="text">
+        <string>Settle time</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>sec</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Settled max dT</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="furnaceSeetleTStragglingSpinBox"/>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLabel" name="label_22">
+       <property name="text">
+        <string>°C</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
@@ -138,8 +172,8 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>130</y>
+      <x>0</x>
+      <y>140</y>
       <width>151</width>
       <height>61</height>
      </rect>
@@ -156,7 +190,11 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+      <widget class="QDoubleSpinBox" name="sampleIWantDoubleSpinBox">
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="0" column="2">
       <widget class="QLabel" name="label_6">
@@ -209,16 +247,44 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="sampleT1DoubleSpinBox"/>
+      <widget class="QDoubleSpinBox" name="sampleT1DoubleSpinBox">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+      </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="sampleT2DoubleSpinBox"/>
+      <widget class="QDoubleSpinBox" name="sampleT2DoubleSpinBox">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="sampleT3DoubleSpinBox"/>
+      <widget class="QDoubleSpinBox" name="sampleT3DoubleSpinBox">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+      </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="sampleT4DoubleSpinBox"/>
+      <widget class="QDoubleSpinBox" name="sampleT4DoubleSpinBox">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -326,6 +392,9 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="singleStep">
+     <double>0.010000000000000</double>
+    </property>
    </widget>
    <widget class="QLabel" name="label_15">
     <property name="geometry">
@@ -386,7 +455,7 @@
      <x>0</x>
      <y>0</y>
      <width>594</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

@@ -96,9 +96,11 @@ void MainWindow::on_experimentManualRadioButton_clicked()
 {
     // TODO
     Experiment::Params_t params;
-    params.furnaceSteadyTime = 0;
+    params.furnaceSettleTime = ui->furnaceSettleTimeSpinBox->value();
     params.furnaceT = ui->furnaceTWantSpinBox->value();
-    params.furnaceTStraggling = 0;
-    params.sampleI = 0;
-    experiment.start(params);
+    params.furnaceSettleTStraggling = ui->furnaceSeetleTStragglingSpinBox->value();
+    params.sampleI = ui->sampleIWantDoubleSpinBox->value();
+    // TODO
+    if (!experiment.start(params))
+    {}
 }
