@@ -102,5 +102,7 @@ void MainWindow::on_experimentManualRadioButton_clicked()
     params.sampleI = ui->sampleIWantDoubleSpinBox->value();
     // TODO
     if (!experiment.start(params))
-    {}
+    {
+        ui->statusBar->showMessage("Failed to start experiment: " + experiment.errorString());
+    }
 }

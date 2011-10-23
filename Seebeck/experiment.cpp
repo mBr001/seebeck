@@ -8,6 +8,7 @@ const double Experiment::timerDwell = 1000;
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
     dataLog(COL_END),
+    errorf(NoError),
     paramsf(),
     state(STATE_STOP),
     timer(this)
@@ -67,6 +68,22 @@ void Experiment::doStabilize()
 void Experiment::doStop()
 {
 // abort experiment go to cooldown?
+}
+
+Experiment::ExperimentError_t Experiment::error() const
+{
+    return errorf;
+}
+
+QString Experiment::errorString() const
+{
+    switch(errorf) {
+    case NoError:
+        return "No error";
+
+    default:
+        return "Unknown error.";
+    }
 }
 
 void Experiment::on_timer_timeout()

@@ -14,6 +14,11 @@ class Experiment : public QObject
 {
     Q_OBJECT
 public:
+    typedef enum {
+        NoError = 0
+
+    } ExperimentError_t;
+
     class Params_t {
     public:
         /** Turn furnace power on/off. */
@@ -35,12 +40,15 @@ public:
         Params_t() :
             furnacePower(false), furnaceT(-274),
             furnaceSettleTStraggling(-1), furnaceSettleTime(-1), sampleI(-1)
-        {};
+        {}
     };
 
     explicit Experiment(QObject *parent = 0);
 
     void close();
+    ExperimentError_t error() const;
+    QString errorString() const;
+
     // When changing prototype, change numeric suffix.
     // This is simple hack to keep definition clear even for function
     // which takes as parameters jus bunch of strings.
@@ -98,6 +106,7 @@ private:
     sdp_t sdp;
     sdp_va_t sdp_va_maximums;
 
+    ExperimentError_t errorf;
     Params_t paramsf;
 
     State_t state;
