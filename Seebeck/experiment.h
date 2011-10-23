@@ -15,8 +15,8 @@ class Experiment : public QObject
     Q_OBJECT
 public:
     typedef enum {
-        NoError = 0
-
+        NoError = 0,
+        InvalidValueError = 1
     } ExperimentError_t;
 
     class Params_t {
@@ -45,6 +45,7 @@ public:
 
     explicit Experiment(QObject *parent = 0);
 
+    bool checkParams(const Params_t &params) const;
     void close();
     ExperimentError_t error() const;
     QString errorString() const;
@@ -107,6 +108,7 @@ private:
     sdp_va_t sdp_va_maximums;
 
     ExperimentError_t errorf;
+    QString errorStringf;
     Params_t paramsf;
 
     State_t state;
@@ -121,6 +123,8 @@ private:
     void doCoolDown();
     void doStabilize();
     void doStop();
+
+    void setError(ExperimentError_t error, const QString &extraDescription = QString());
 
 signals:
     void fatalError(const QString &errorShort, const QString &errorLong);

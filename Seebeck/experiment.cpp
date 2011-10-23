@@ -20,6 +20,14 @@ Experiment::Experiment(QObject *parent) :
     QMetaObject::connectSlotsByName(this);
 }
 
+bool Experiment::checkParams(const Params_t &params) const
+{
+    return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
+            && params.furnaceT >= -273 && params.furnaceT < 5000
+            && params.furnaceSettleTStraggling > 0 && params.furnaceSettleTStraggling < 5000
+            && params.sampleI >= 0 && params.sampleI <= sdp_va_maximums.curr);
+}
+
 void Experiment::close()
 {
     // TODO is expefriment running? -> stop
@@ -77,13 +85,26 @@ Experiment::ExperimentError_t Experiment::error() const
 
 QString Experiment::errorString() const
 {
+    QString s;
+
     switch(errorf) {
     case NoError:
-        return "No error";
+        s = "No error";
+        break;
+
+    case InvalidValueError:
+        s = "Invalid parameter value";
+        break;
 
     default:
-        return "Unknown error.";
+        s = "Unknown error";
+        break;
     }
+
+    if (!errorStringf.isEmpty())
+        s = s + " " + errorStringf;
+
+    return s;
 }
 
 void Experiment::on_timer_timeout()
@@ -110,13 +131,13 @@ bool Experiment::open_00(const QString &eurothermPort,
 {
     int sdp_ret(sdp_open(&sdp, msdpPort.toLocal8Bit().constData(), SDP_DEV_ADDR_MIN));
     if (sdp_ret != SDP_EOK) {
-        emit fatalError("SDP PS open failes.", sdp_strerror(sdp_ret));
+        emit fatalError("SDP PS open failed", sdp_strerror(sdp_ret));
         return false;
     }
     sdp_ret = sdp_get_va_maximums(&sdp, &sdp_va_maximums);
     if (sdp_ret != SDP_EOK) {
         sdp_close(&sdp);
-        emit fatalError("SDP PS open failes.", sdp_strerror(sdp_ret));
+        emit fatalError("SDP PS open failed", sdp_strerror(sdp_ret));
         return false;
     }
 
@@ -131,7 +152,7 @@ bool Experiment::open_00(const QString &eurothermPort,
     if (!eurotherm.open(eurothermPort, eurothermSlave)) {
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("Failed to open Eurotherm regulator.", eurotherm.errorString());
+        emit fatalError("Failed to open Eurotherm regulator", eurotherm.errorString());
         return false;
     }
 
@@ -187,16 +208,18 @@ const Experiment::Params_t& Experiment::params() const
     return paramsf;
 }
 
+void Experiment::setError(ExperimentError_t error, const QString &extraDescription)
+{
+    errorf = error;
+    errorStringf = extraDescription;
+}
+
 bool Experiment::start(const Params_t &params)
 {
-    if (params.furnaceSettleTime <= 0 || !isfinite(params.furnaceSettleTime)
-            || params.furnaceT <= 0 || !isfinite(params.furnaceT)
-            || params.furnaceSettleTStraggling <= 0 || !isfinite(params.furnaceSettleTStraggling)
-            || params.sampleI <= 0 || !isfinite(params.sampleI)) {
-        // TODO: report error (zavést error() a errorStrinf() ?)
+    if (!checkParams(params)) {
+        setError(InvalidValueError);
         return false;
     }
-
 
     state = STATE_STABILIZE;
     this->paramsf = params;
