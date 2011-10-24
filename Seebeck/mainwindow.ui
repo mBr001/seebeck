@@ -357,7 +357,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
            <item row="1" column="0">
-            <widget class="QTableWidget" name="tableWidget">
+            <widget class="QTableWidget" name="autoMeasPointsTableWidget">
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
              </attribute>
@@ -374,7 +374,7 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QToolButton" name="toolButton">
+            <widget class="QToolButton" name="autoMeasErasePointsToolButton">
              <property name="toolTip">
               <string>Remove selected measurement point(s)</string>
              </property>
@@ -413,9 +413,12 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QSpinBox" name="spinBox">
+            <widget class="QSpinBox" name="autoMeasFromSpinBox">
              <property name="toolTip">
               <string>Lowwer bound of temperature rage.</string>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
              </property>
             </widget>
            </item>
@@ -434,9 +437,12 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QSpinBox" name="spinBox_2">
+            <widget class="QSpinBox" name="autoMeasToSpinBox">
              <property name="toolTip">
               <string>Upper bound of temperature range.</string>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
              </property>
             </widget>
            </item>
@@ -455,9 +461,15 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QSpinBox" name="spinBox_3">
+            <widget class="QSpinBox" name="autoMeasStepSpinBox">
              <property name="toolTip">
               <string>Step size betwen two points in range.</string>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
              </property>
             </widget>
            </item>
@@ -476,7 +488,7 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+            <widget class="QDoubleSpinBox" name="autoMeasSampleIDoubleSpinBox">
              <property name="toolTip">
               <string>Sample current generating temperature gradient.</string>
              </property>
@@ -493,7 +505,7 @@
             </widget>
            </item>
            <item row="4" column="1" colspan="2">
-            <widget class="QPushButton" name="addMeasPointsPushButton">
+            <widget class="QPushButton" name="autoMeasAddPointsPushButton">
              <property name="toolTip">
               <string>Add nw point or point range.</string>
              </property>

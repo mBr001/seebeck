@@ -119,7 +119,37 @@ void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
 
 }
 
-void MainWindow::on_addMeasPointsPushButton_clicked()
+void MainWindow::on_autoMeasAddPointsPushButton_clicked()
 {
+    int measFrom(ui->autoMeasFromSpinBox->value());
+    int measTo(ui->autoMeasToSpinBox->value());
+    int measStep(ui->autoMeasStepSpinBox->value());
+    QString sampleIStr(ui->autoMeasSampleIDoubleSpinBox->text());
 
+    int row(ui->autoMeasPointsTableWidget->rowCount());
+    for (; measFrom <= measTo; measFrom += measStep) {
+        ui->autoMeasPointsTableWidget->insertRow(row);
+        QString measFromStr("%1");
+        ui->autoMeasPointsTableWidget->setItem(row, 0, new QTableWidgetItem(measFromStr.arg(measFrom)));
+        ui->autoMeasPointsTableWidget->setItem(row, 1, new QTableWidgetItem(sampleIStr));
+        ++row;
+    }
+}
+
+void MainWindow::on_autoMeasFromSpinBox_editingFinished()
+{
+    int measFrom(ui->autoMeasFromSpinBox->value());
+
+    if (ui->autoMeasToSpinBox->value() < measFrom) {
+        ui->autoMeasToSpinBox->setValue(measFrom);
+    }
+}
+
+void MainWindow::on_autoMeasToSpinBox_editingFinished()
+{
+    int measFrom(ui->autoMeasFromSpinBox->value());
+
+    if (ui->autoMeasToSpinBox->value() < measFrom) {
+        ui->autoMeasToSpinBox->setValue(measFrom);
+    }
 }
