@@ -43,6 +43,7 @@ private slots:
     void on_autoMeasFromSpinBox_editingFinished();
     void on_autoMeasToSpinBox_editingFinished();
     void on_autoMeasErasePointsToolButton_clicked();
+    void on_furnaceTWantSpinBox_editingFinished();
 };
 
 #endif // MAINWINDOW_H

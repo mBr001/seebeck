@@ -16,7 +16,8 @@ class Experiment : public QObject
 public:
     typedef enum {
         NoError = 0,
-        InvalidValueError = 1
+        InvalidValueError = 1,
+        EurothermError = 2
     } ExperimentError_t;
 
     class Params_t {
@@ -25,7 +26,7 @@ public:
         bool furnacePower;
 
         /** Wanted furnace temperature (°C). */
-        double furnaceT;
+        int furnaceT;
 
         /** Maximal difference from furnaceT to be system clasified as steady. */
         double furnaceSettleTStraggling;
@@ -56,7 +57,7 @@ public:
     bool open_00(const QString &eurothermPort, int eurothermSlave,
                  const QString &hp34970Port, const QString &msdpPort,
                  const QString &dataDirName);
-    const Params_t& params() const;
+    Params_t params();
     bool start(const Params_t &params);
     void stop();
 

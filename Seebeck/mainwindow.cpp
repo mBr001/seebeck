@@ -13,10 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     experiment.setObjectName("experiment");
     ui->setupUi(this);
     QObject::connect(&configUI, SIGNAL(accepted()), this, SLOT(show()));
-
-    Experiment::Params_t params(experiment.params());
-    // TODO: set-up from config
-    experiment.start(params);
 }
 
 MainWindow::~MainWindow()
@@ -70,7 +66,9 @@ void MainWindow::show()
         close();
         return;
     }
-    //configUI.ui->msdpPortComboBox->editText();
+
+    Experiment::Params_t params(experiment.params());
+    ui->furnaceTWantSpinBox->setValue(params.furnaceT);
 
     QWidget::show();
 }
@@ -108,7 +106,6 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
     if (!experiment.start(params))
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
-        return;
     }
 }
 
@@ -172,5 +169,19 @@ void MainWindow::on_autoMeasErasePointsToolButton_clicked()
          irow != selectedRows.begin(); ) {
         --irow;
         ui->autoMeasPointsTableWidget->removeRow(*irow);
+    }
+}
+
+void MainWindow::on_furnaceTWantSpinBox_editingFinished()
+{
+    if (!ui->experimentManualRadioButton->isChecked())
+        return;
+
+    Experiment::Params_t params(experiment.params());
+
+    params.furnaceT = ui->furnaceTWantSpinBox->value();
+    if (!experiment.start(params))
+    {
+        on_experiment_fatalError("Failed to start experiment", experiment.errorString());
     }
 }

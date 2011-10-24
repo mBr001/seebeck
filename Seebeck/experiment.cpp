@@ -24,7 +24,7 @@ bool Experiment::checkParams(const Params_t &params) const
 {
     return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
             && params.furnaceT >= -273 && params.furnaceT < 5000
-            && params.furnaceSettleTStraggling > 0 && params.furnaceSettleTStraggling < 5000
+            && params.furnaceSettleTStraggling >= 0 && params.furnaceSettleTStraggling < 5000
             && params.sampleI >= 0 && params.sampleI <= sdp_va_maximums.curr);
 }
 
@@ -203,9 +203,14 @@ bool Experiment::open_00(const QString &eurothermPort,
     return true;
 }
 
-const Experiment::Params_t& Experiment::params() const
+Experiment::Params_t Experiment::params()
 {
-    return paramsf;
+    Params_t params(paramsf);
+    if (!eurotherm.targetT(&params.furnaceT)) {
+        // TODO
+        setError(EurothermError);
+    }
+    return params;
 }
 
 void Experiment::setError(ExperimentError_t error, const QString &extraDescription)

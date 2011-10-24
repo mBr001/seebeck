@@ -84,3 +84,10 @@ bool QModBus::setProgram(bool)
 {
     return false;
 }
+
+bool QModBus::targetT(int *T) const
+{
+    *T = 0;
+
+    return (modbus_read_registers(dev, 2, 1, (uint16_t*)T) != -1);
+}

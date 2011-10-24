@@ -25,6 +25,7 @@ public:
     bool open(const QString &port, int addr);
     bool setTarget(int T);
     bool setProgram(bool enabled);
+    bool targetT(int *T) const;
 
 private:
     modbus_t *dev;
