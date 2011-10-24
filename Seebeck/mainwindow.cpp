@@ -153,3 +153,24 @@ void MainWindow::on_autoMeasToSpinBox_editingFinished()
         ui->autoMeasToSpinBox->setValue(measFrom);
     }
 }
+
+void MainWindow::on_autoMeasErasePointsToolButton_clicked()
+{
+    QList<QTableWidgetSelectionRange> selections(
+                ui->autoMeasPointsTableWidget->selectedRanges());
+    QSet<int> selectedRows;
+
+    foreach(const QTableWidgetSelectionRange &s, selections) {
+        int top(s.topRow());
+        while (top <= s.bottomRow()) {
+            selectedRows.insert(top);
+            ++top;
+        }
+    }
+
+    for (QSet<int>::const_iterator irow(selectedRows.end());
+         irow != selectedRows.begin(); ) {
+        --irow;
+        ui->autoMeasPointsTableWidget->removeRow(*irow);
+    }
+}

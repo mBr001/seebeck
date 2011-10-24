@@ -42,6 +42,7 @@ private slots:
     void on_autoMeasAddPointsPushButton_clicked();
     void on_autoMeasFromSpinBox_editingFinished();
     void on_autoMeasToSpinBox_editingFinished();
+    void on_autoMeasErasePointsToolButton_clicked();
 };
 
 #endif // MAINWINDOW_H
