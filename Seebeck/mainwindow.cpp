@@ -118,3 +118,8 @@ void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
         return;
 
 }
+
+void MainWindow::on_addMeasPointsPushButton_clicked()
+{
+
+}
