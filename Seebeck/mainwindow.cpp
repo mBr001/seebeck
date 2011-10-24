@@ -50,72 +50,6 @@ void MainWindow::on_experiment_fatalError(const QString &errorShort, const QStri
     close();
 }
 
-void MainWindow::on_experiment_furnaceTMeasured(int T)
-{
-    ui->furnaceTSpinBox->setValue(T);
-}
-
-void MainWindow::show()
-{
-    if (!experiment.open_00(
-                config.eurothermPort(),
-                config.eurothermSlave(),
-                config.hp34970Port(),
-                config.msdpPort(),
-                config.dataDir())) {
-        close();
-        return;
-    }
-
-    Experiment::Params_t params(experiment.params());
-    ui->furnaceTWantSpinBox->setValue(params.furnaceT);
-
-    QWidget::show();
-}
-
-void MainWindow::startApp()
-{
-    configUI.show();
-}
-
-void MainWindow::on_furnaceTWantSpinBox_valueChanged(int arg1)
-{
-    Experiment::Params_t params(experiment.params());
-    params.furnaceT = arg1;
-    experiment.start(params);
-}
-
-void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
-{
-    if (checked)
-        experiment.stop();
-}
-
-void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
-{
-    if (!checked)
-        return;
-
-    Experiment::Params_t params;
-
-    params.furnaceSettleTime = ui->furnaceSettleTimeSpinBox->value();
-    params.furnaceT = ui->furnaceTWantSpinBox->value();
-    params.furnaceSettleTStraggling = ui->furnaceSeetleTStragglingSpinBox->value();
-    params.sampleI = ui->sampleIWantDoubleSpinBox->value();
-
-    if (!experiment.start(params))
-    {
-        on_experiment_fatalError("Failed to start experiment", experiment.errorString());
-    }
-}
-
-void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
-{
-    if (!checked)
-        return;
-
-}
-
 void MainWindow::on_autoMeasAddPointsPushButton_clicked()
 {
     int measFrom(ui->autoMeasFromSpinBox->value());
@@ -134,15 +68,6 @@ void MainWindow::on_autoMeasAddPointsPushButton_clicked()
 }
 
 void MainWindow::on_autoMeasFromSpinBox_editingFinished()
-{
-    int measFrom(ui->autoMeasFromSpinBox->value());
-
-    if (ui->autoMeasToSpinBox->value() < measFrom) {
-        ui->autoMeasToSpinBox->setValue(measFrom);
-    }
-}
-
-void MainWindow::on_autoMeasToSpinBox_editingFinished()
 {
     int measFrom(ui->autoMeasFromSpinBox->value());
 
@@ -172,6 +97,58 @@ void MainWindow::on_autoMeasErasePointsToolButton_clicked()
     }
 }
 
+void MainWindow::on_autoMeasToSpinBox_editingFinished()
+{
+    int measFrom(ui->autoMeasFromSpinBox->value());
+
+    if (ui->autoMeasToSpinBox->value() < measFrom) {
+        ui->autoMeasToSpinBox->setValue(measFrom);
+    }
+}
+
+void MainWindow::on_experiment_furnaceTMeasured(int T)
+{
+    ui->furnaceTSpinBox->setValue(T);
+}
+
+void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
+{
+    if (!checked)
+        return;
+}
+
+void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
+{
+    if (!checked)
+        return;
+
+    Experiment::Params_t params;
+
+    params.furnacePower = true;
+    params.furnaceSettleTime = ui->furnaceSettleTimeSpinBox->value();
+    params.furnaceSettleTStraggling = ui->furnaceSeetleTStragglingSpinBox->value();
+    params.furnaceT = ui->furnaceTWantSpinBox->value();
+    params.sampleI = ui->sampleIWantDoubleSpinBox->value();
+
+    if (!experiment.start(params))
+    {
+        on_experiment_fatalError("Failed to start experiment", experiment.errorString());
+    }
+}
+
+void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
+{
+    if (checked)
+        experiment.stop();
+}
+
+void MainWindow::on_furnaceTWantSpinBox_valueChanged(int arg1)
+{
+    Experiment::Params_t params(experiment.params());
+    params.furnaceT = arg1;
+    experiment.start(params);
+}
+
 void MainWindow::on_furnaceTWantSpinBox_editingFinished()
 {
     if (!ui->experimentManualRadioButton->isChecked())
@@ -184,4 +161,30 @@ void MainWindow::on_furnaceTWantSpinBox_editingFinished()
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
     }
+}
+
+void MainWindow::show()
+{
+    if (!experiment.open_00(
+                config.eurothermPort(),
+                config.eurothermSlave(),
+                config.hp34970Port(),
+                config.msdpPort(),
+                config.dataDir())) {
+        close();
+        return;
+    }
+
+    Experiment::Params_t params(experiment.params());
+    ui->furnaceTWantSpinBox->setValue(params.furnaceT);
+
+    // turn experiment off -> experiment is set up at star (manual or automatic)
+    ui->experimentOffRadioButton->setChecked(true);
+
+    QWidget::show();
+}
+
+void MainWindow::startApp()
+{
+    configUI.show();
 }
