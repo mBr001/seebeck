@@ -50,6 +50,7 @@ public:
     void close();
     ExperimentError_t error() const;
     QString errorString() const;
+    bool furnaceTRange(int *Tmin, int *Tmax);
 
     // When changing prototype, change numeric suffix.
     // This is simple hack to keep definition clear even for function

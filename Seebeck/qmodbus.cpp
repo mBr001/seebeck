@@ -19,12 +19,10 @@ void QModBus::close()
     }
 }
 
-int QModBus::currentT()
+bool QModBus::currentT(int *T)
 {
-    uint16_t dest;
-    modbus_read_registers(dev, 1, 1, &dest);
-
-    return dest;
+    *T = 0;
+    return (modbus_read_registers(dev, REG_PV_IN, 1, (uint16_t*)T) == 1);
 }
 
 QModBus::Error_t QModBus::error() const
@@ -52,6 +50,11 @@ QString QModBus::errorString() const
     }
 }
 
+bool QModBus::isOpen() const
+{
+    return (dev != NULL);
+}
+
 bool QModBus::open(const QString &port, int slave)
 {
     err = EOK;
@@ -75,19 +78,31 @@ bool QModBus::open(const QString &port, int slave)
     return true;
 }
 
-bool QModBus::setTarget(int)
+bool QModBus::setTarget(int T)
 {
-    return false;
+    //return (modbus_write_register(dev, REG_SP_SEL, 0) == 1);
+    return (modbus_write_registers(dev, REG_SP1, 1, (uint16_t*)&T) == 1);
 }
 
-bool QModBus::setProgram(bool)
+bool QModBus::setProgram(bool enabled)
 {
-    return false;
+    return (modbus_write_register(dev, REG_IM, enabled ? 1 : 0) == 1);
 }
 
 bool QModBus::targetT(int *T) const
 {
     *T = 0;
 
-    return (modbus_read_registers(dev, 2, 1, (uint16_t*)T) != -1);
+    return (modbus_read_registers(dev, REG_TG_SP, 1, (uint16_t*)T) == 1);
+}
+
+bool QModBus::targetTRange(int *Tmin, int *Tmax)
+{
+    *Tmin = *Tmax = 0;
+
+    if (modbus_read_registers(dev, REG_SP_LO, 1, (uint16_t*)Tmin) != 1)
+        return false;
+    if (modbus_read_registers(dev, REG_SP_HI, 1, (uint16_t*)Tmax) != 1)
+        return false;
+    return true;
 }

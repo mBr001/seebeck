@@ -144,6 +144,9 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
 
 void MainWindow::on_furnaceTWantSpinBox_valueChanged(int arg1)
 {
+    if (!ui->experimentManualRadioButton->isChecked())
+        return;
+
     Experiment::Params_t params(experiment.params());
     params.furnaceT = arg1;
     experiment.start(params);
@@ -180,6 +183,16 @@ void MainWindow::show()
 
     // turn experiment off -> experiment is set up at star (manual or automatic)
     ui->experimentOffRadioButton->setChecked(true);
+
+    int Tmin, Tmax;
+    if (!experiment.furnaceTRange(&Tmin, &Tmax)) {
+        on_experiment_fatalError("Eurotherm operation error",
+                                 "Failed to get furnace T operation range.");
+        return;
+    }
+    ui->furnaceTWantSpinBox->setRange(Tmin, Tmax);
+    ui->autoMeasFromSpinBox->setRange(Tmin, Tmax);
+    ui->autoMeasToSpinBox->setRange(Tmin, Tmax);
 
     QWidget::show();
 }

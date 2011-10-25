@@ -34,7 +34,8 @@ void Experiment::close()
     timer.stop();
     sdp_close(&sdp);
     hp34970.close();
-    eurotherm.close();
+    if (eurotherm.isOpen())
+        eurotherm.close();
     dataLog.close();
 }
 
@@ -46,7 +47,12 @@ void Experiment::doCoolDown()
 
 void Experiment::doStabilize()
 {
-    int T(eurotherm.currentT());
+    int T;
+
+    if (!eurotherm.currentT(&T)) {
+        // TODO
+        return;
+    }
     dataLog.setAt(COL_TIME, QDateTime::currentDateTimeUtc());
     dataLog.setAt(COL_FURNACE_T, T);
     if (!dataLog.write()) {
@@ -96,6 +102,10 @@ QString Experiment::errorString() const
         s = "Invalid parameter value";
         break;
 
+    case EurothermError:
+        s = "Eurother operation error";
+        break;
+
     default:
         s = "Unknown error";
         break;
@@ -105,6 +115,15 @@ QString Experiment::errorString() const
         s = s + " " + errorStringf;
 
     return s;
+}
+
+bool Experiment::furnaceTRange(int *Tmin, int *Tmax)
+{
+    if (!eurotherm.targetTRange(Tmin, Tmax)) {
+        setError(EurothermError);
+        return false;
+    }
+    return true;
 }
 
 void Experiment::on_timer_timeout()
@@ -232,11 +251,16 @@ bool Experiment::start(const Params_t &params)
 
     if (!eurotherm.setTarget(params.furnaceT))
     {
+        // TODO
+        setError(EurothermError);
         //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
+
     if (!eurotherm.setProgram(true))
     {
+        // TODO
+        setError(EurothermError);
         //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
