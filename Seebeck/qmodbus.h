@@ -8,25 +8,19 @@ class QModBus : public QObject
 {
     Q_OBJECT
 public:
-    typedef enum {
-        EOK = 0,
-        ENEW,
-        ECONNECT,
-        ESLAVE
-    } Error_t;
 
     explicit QModBus(QObject *parent = 0);
     ~QModBus();
 
     void close();
     bool currentT(int *T);
-    Error_t error() const;
+    int error() const;
     QString errorString() const;
     bool isOpen() const;
     bool open(const QString &port, int addr);
     bool setTarget(int T);
     bool setProgram(bool enabled);
-    bool targetT(int *T) const;
+    bool targetT(int *T);
     bool targetTRange(int *Tmin, int *Tmax);
 
 private:
@@ -56,7 +50,7 @@ private:
     } Registers;
 
     modbus_t *dev;
-    Error_t err;
+    int errNo;
 
 signals:
 
