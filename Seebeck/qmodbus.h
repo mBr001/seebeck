@@ -43,6 +43,8 @@ private:
         REG_SP_LO = 112,
         /** Instrument mode: 0 - auto, 1 - manual, 2 - standby */
         REG_IM = 199,
+        /** CJC Temperature. */
+        REG_CJC_IN = 215,
         /** Loop break. */
         REG_LBR = 263,
         /** Mode of loop: { 0 = Auto, 1 = manual }. */
