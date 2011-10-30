@@ -69,8 +69,7 @@ bool QModBus::open(const QString &port, int slave)
 
 bool QModBus::setTarget(int T)
 {
-    //return (modbus_write_register(dev, REG_SP_SEL, 0) == 1);
-    if (modbus_write_registers(dev, REG_SP1, 1, (uint16_t*)&T) != 1) {
+    if (modbus_write_register(dev, REG_SP1, T) != 1) {
         errNo = errno;
         return false;
     }
@@ -85,6 +84,13 @@ bool QModBus::setProgram(bool enabled)
         return false;
     }
 
+    // TODO: check: set output value to 0
+    if (!enabled) {
+        if (modbus_write_register(dev, REG_MAN_OP, 0) != 1) {
+            errNo = errno;
+            return false;
+        }
+    }
     return true;
 }
 
