@@ -39,10 +39,8 @@ private slots:
     void on_furnaceTWantSpinBox_valueChanged(int arg1);
     void on_experimentManualRadioButton_toggled(bool checked);
     void on_experimentAutoRadioButton_toggled(bool checked);
-    void on_autoMeasAddPointsPushButton_clicked();
     void on_autoMeasFromSpinBox_editingFinished();
     void on_autoMeasToSpinBox_editingFinished();
-    void on_autoMeasErasePointsToolButton_clicked();
     void on_furnaceTWantSpinBox_editingFinished();
 };
 

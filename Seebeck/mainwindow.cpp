@@ -50,50 +50,12 @@ void MainWindow::on_experiment_fatalError(const QString &errorShort, const QStri
     close();
 }
 
-void MainWindow::on_autoMeasAddPointsPushButton_clicked()
-{
-    int measFrom(ui->autoMeasFromSpinBox->value());
-    int measTo(ui->autoMeasToSpinBox->value());
-    int measStep(ui->autoMeasStepSpinBox->value());
-    QString sampleIStr(ui->autoMeasSampleIDoubleSpinBox->text());
-
-    int row(ui->autoMeasPointsTableWidget->rowCount());
-    for (; measFrom <= measTo; measFrom += measStep) {
-        ui->autoMeasPointsTableWidget->insertRow(row);
-        QString measFromStr("%1");
-        ui->autoMeasPointsTableWidget->setItem(row, 0, new QTableWidgetItem(measFromStr.arg(measFrom)));
-        ui->autoMeasPointsTableWidget->setItem(row, 1, new QTableWidgetItem(sampleIStr));
-        ++row;
-    }
-}
-
 void MainWindow::on_autoMeasFromSpinBox_editingFinished()
 {
     int measFrom(ui->autoMeasFromSpinBox->value());
 
     if (ui->autoMeasToSpinBox->value() < measFrom) {
         ui->autoMeasToSpinBox->setValue(measFrom);
-    }
-}
-
-void MainWindow::on_autoMeasErasePointsToolButton_clicked()
-{
-    QList<QTableWidgetSelectionRange> selections(
-                ui->autoMeasPointsTableWidget->selectedRanges());
-    QSet<int> selectedRows;
-
-    foreach(const QTableWidgetSelectionRange &s, selections) {
-        int top(s.topRow());
-        while (top <= s.bottomRow()) {
-            selectedRows.insert(top);
-            ++top;
-        }
-    }
-
-    for (QSet<int>::const_iterator irow(selectedRows.end());
-         irow != selectedRows.begin(); ) {
-        --irow;
-        ui->autoMeasPointsTableWidget->removeRow(*irow);
     }
 }
 
@@ -125,10 +87,10 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
     Experiment::Params_t params;
 
     params.furnacePower = true;
-    params.furnaceSettleTime = ui->furnaceSettleTimeSpinBox->value();
-    params.furnaceSettleTStraggling = ui->furnaceSeetleTStragglingSpinBox->value();
-    params.furnaceT = ui->furnaceTWantSpinBox->value();
-    params.sampleI = ui->sampleIWantDoubleSpinBox->value();
+    params.furnaceSettleTime = ui->manualFurnaceTSpinBox->value();
+    params.furnaceSettleTStraggling = 0;
+    params.furnaceT = ui->manualFurnaceTSpinBox->value();
+    params.sampleI = ui->manualSampleIDoubleSpinBox->value();
 
     if (!experiment.start(params))
     {
@@ -159,7 +121,7 @@ void MainWindow::on_furnaceTWantSpinBox_editingFinished()
 
     Experiment::Params_t params(experiment.params());
 
-    params.furnaceT = ui->furnaceTWantSpinBox->value();
+    params.furnaceT = ui->manualFurnaceTSpinBox->value();
     if (!experiment.start(params))
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
@@ -179,7 +141,7 @@ void MainWindow::show()
     }
 
     Experiment::Params_t params(experiment.params());
-    ui->furnaceTWantSpinBox->setValue(params.furnaceT);
+    ui->manualFurnaceTSpinBox->setValue(params.furnaceT);
 
     // turn experiment off -> experiment is set up at star (manual or automatic)
     ui->experimentOffRadioButton->setChecked(true);
@@ -190,7 +152,7 @@ void MainWindow::show()
                                  "Failed to get furnace T operation range.");
         return;
     }
-    ui->furnaceTWantSpinBox->setRange(Tmin, Tmax);
+    ui->manualFurnaceTSpinBox->setRange(Tmin, Tmax);
     ui->autoMeasFromSpinBox->setRange(Tmin, Tmax);
     ui->autoMeasToSpinBox->setRange(Tmin, Tmax);
 

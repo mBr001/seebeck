@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>746</width>
-    <height>532</height>
+    <width>757</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,10 +21,10 @@
        <string>Experiment</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0" colspan="3">
+       <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>mode</string>
+          <string>Mode</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
@@ -60,7 +60,7 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0" colspan="3">
+       <item row="3" column="0">
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string>Sample</string>
@@ -285,7 +285,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -298,7 +298,7 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="0" colspan="3">
+       <item row="2" column="0">
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
           <string>Furnace</string>
@@ -337,8 +337,129 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
+          <item row="0" column="3" rowspan="2">
            <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>T Straggling</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="TStragglingDoubleSpinBox">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="maximum">
+             <double>9999.989999999999782</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_22">
+            <property name="text">
+             <string>°C</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QGroupBox" name="groupBox_12">
+         <property name="title">
+          <string>Sample back heating</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_61">
+            <property name="text">
+             <string>I</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_11">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_64">
+            <property name="text">
+             <string>A</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_62">
+            <property name="text">
+             <string>U</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_63">
+            <property name="text">
+             <string>P</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_12">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_13">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_65">
+            <property name="text">
+             <string>V</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_66">
+            <property name="text">
+             <string>W</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" rowspan="3">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -359,11 +480,11 @@
     <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Manual settings</string>
+        <string>Manual Mode</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_8">
         <item row="0" column="0">
@@ -417,43 +538,28 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_21">
-             <property name="text">
-              <string>Settled max dT</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="manualSeetleTStragglingSpinBox">
-             <property name="maximum">
-              <number>9999</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QLabel" name="label_22">
-             <property name="text">
-              <string>°C</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0" colspan="2">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1">
          <widget class="QGroupBox" name="groupBox_3">
           <property name="title">
-           <string>Sample heating</string>
+           <string>Sample back heating</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>I</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="1">
             <widget class="QDoubleSpinBox" name="manualSampleIDoubleSpinBox">
              <property name="singleStep">
@@ -468,59 +574,77 @@
              </property>
             </widget>
            </item>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="manualModeCurrentRadioButton">
+             <property name="text">
+              <string>Current</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QRadioButton" name="manualModePowerRadioButton">
+             <property name="text">
+              <string>Power</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="manualSamplePDoubleSpinBox"/>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>W</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
-        <item row="2" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+        <item row="3" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_11">
+          <property name="title">
+           <string>Measurement</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+          <layout class="QGridLayout" name="gridLayout_17">
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="manualCountSpinBox">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="manualStartPushButton">
+             <property name="text">
+              <string>Start</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_60">
+             <property name="text">
+              <string>Count</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>Automated measurement settings</string>
+        <string>Automated Mode</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_10">
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="0" column="0">
          <widget class="QGroupBox" name="groupBox_7">
           <property name="title">
-           <string>Furnace operation range</string>
+           <string>Furnace</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_9">
            <item row="0" column="0">
@@ -599,23 +723,19 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QSpinBox" name="autoMeasStabTimeSpinBox"/>
+            <widget class="QSpinBox" name="autoMeasSettleTimeSpinBox"/>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_48">
              <property name="text">
-              <string>Stab. time</string>
+              <string>Settle time</string>
              </property>
             </widget>
            </item>
            <item row="4" column="0">
             <widget class="QLabel" name="label_49">
              <property name="text">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;max. &lt;span style=&quot; vertical-align:sub;&quot;&gt;Δ&lt;/span&gt;T&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Straggling</string>
              </property>
             </widget>
            </item>
@@ -634,11 +754,7 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QSpinBox" name="autoMeasMaxdTSpinBox">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-            </widget>
+            <widget class="QDoubleSpinBox" name="autoMeasTStragglingDoubleSpinBox"/>
            </item>
           </layout>
          </widget>
@@ -646,18 +762,18 @@ p, li { white-space: pre-wrap; }
         <item row="0" column="1" rowspan="2">
          <widget class="QGroupBox" name="groupBox_5">
           <property name="title">
-           <string>Sample T gradient</string>
+           <string>Sample back heating</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="2" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="label_14">
              <property name="text">
               <string>Step</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QDoubleSpinBox" name="autoMeasSampleIDoubleSpinBox">
+           <item row="4" column="1">
+            <widget class="QDoubleSpinBox" name="autoMeasSampleStepDoubleSpinBox">
              <property name="toolTip">
               <string>Sample current generating temperature gradient.</string>
              </property>
@@ -669,71 +785,122 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
+           <item row="4" column="2">
             <widget class="QLabel" name="label_18">
              <property name="text">
               <string>A</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_36">
              <property name="text">
               <string>From</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="label_37">
              <property name="text">
               <string>To</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="autoMeasSampleToDoubleSpinBox"/>
            </item>
-           <item row="0" column="1">
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="autoMeasSampleFromDoubleSpinBox"/>
            </item>
-           <item row="1" column="2">
+           <item row="3" column="2">
             <widget class="QLabel" name="label_38">
              <property name="text">
               <string>A</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
+           <item row="2" column="2">
             <widget class="QLabel" name="label_39">
              <property name="text">
               <string>A</string>
              </property>
             </widget>
            </item>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="autoMeasModeCurrentRadioButton">
+             <property name="text">
+              <string>Current</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QRadioButton" name="autoMeasModePowerRadioButton">
+             <property name="text">
+              <string>Power</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
+        <item row="2" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_10">
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_15">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_57">
+             <property name="text">
+              <string>Number of measurement cycles</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="autoMeasCyclesSpinBox">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="autoMeasRisingCheckBox">
+             <property name="statusTip">
+              <string>Make measurements when furnace T is rising.</string>
+             </property>
+             <property name="text">
+              <string>Rising</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="autoMeasFallingCheckBox">
+             <property name="statusTip">
+              <string>Make measurements when furnace T is falling.</string>
+             </property>
+             <property name="text">
+              <string>Falling</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_59">
+             <property name="text">
+              <string>Measure when furnace T is </string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
          <widget class="QGroupBox" name="groupBox_9">
           <property name="title">
-           <string>Experiment status</string>
+           <string>Measurement</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
            <item row="2" column="0">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="autoMeasStartPushButton">
              <property name="text">
               <string>Start</string>
              </property>
@@ -830,61 +997,24 @@ p, li { white-space: pre-wrap; }
           </layout>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_10">
-          <property name="title">
-           <string/>
+        <item row="3" column="0" colspan="2">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_15">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_57">
-             <property name="text">
-              <string>Number of measurement cycles</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="autoMeasCyclesSpinBox">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="checkBox">
-             <property name="statusTip">
-              <string>Make measurements when furnace T is rising.</string>
-             </property>
-             <property name="text">
-              <string>Up</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="checkBox_2">
-             <property name="statusTip">
-              <string>Make measurements when furnace T is falling.</string>
-             </property>
-             <property name="text">
-              <string>Down</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_59">
-             <property name="text">
-              <string>Measure when proceeding </string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
-        <string>Data export</string>
+        <string>Data Export</string>
        </attribute>
        <widget class="QLabel" name="label_27">
         <property name="geometry">
