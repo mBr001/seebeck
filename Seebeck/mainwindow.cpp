@@ -75,12 +75,16 @@ void MainWindow::on_experiment_furnaceTMeasured(int T)
 
 void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
 {
+    ui->automatedTab->setEnabled(checked);
+
     if (!checked)
         return;
 }
 
 void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
 {
+    ui->manualTab->setEnabled(checked);
+
     if (!checked)
         return;
 

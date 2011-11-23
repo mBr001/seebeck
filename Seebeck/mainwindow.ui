@@ -442,6 +442,9 @@
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
+            <property name="maximum">
+             <double>999.990000000000009</double>
+            </property>
            </widget>
           </item>
           <item row="1" column="2">
@@ -482,7 +485,10 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="manualTab">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Manual Mode</string>
        </attribute>
@@ -656,7 +662,10 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="automatedTab">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Automated Mode</string>
        </attribute>
@@ -1033,6 +1042,9 @@
        </layout>
       </widget>
       <widget class="QWidget" name="tab_3">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
         <string>Data Export</string>
        </attribute>
