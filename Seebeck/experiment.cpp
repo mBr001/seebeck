@@ -47,6 +47,13 @@ void Experiment::doCoolDown()
 
 void Experiment::doStabilize()
 {
+    sdp_va_data_t va_data;
+
+    if (sdp_get_va_data(&sdp, &va_data) != SDP_EOK) {
+        // FIMXE: whoops
+    }
+    emit sampleHeatingUIMeasured(va_data.curr, va_data.volt);
+
     int T;
 
     if (!eurotherm.currentT(&T)) {

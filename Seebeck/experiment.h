@@ -133,7 +133,12 @@ signals:
     /** Called at end of experiment, after completion all measurements. */
     void finished();
 
+    /** Emited when T of furnace is measured. */
     void furnaceTMeasured(int T);
+
+    /** Emited when real I and U of sample back heating is measured. */
+    void sampleHeatingUIMeasured(double I, double U);
+
     void sampleTMeasured(int T1, int T2, int T3, int T4);
     void sampleUMeasured(int U12, int U23, int U34, int U41);
 

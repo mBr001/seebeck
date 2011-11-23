@@ -33,15 +33,17 @@ public slots:
     void show();
 
 private slots:
-    void on_experiment_fatalError(const QString &errorShort, const QString &errorLong);
-    void on_experiment_furnaceTMeasured(int T);
-    void on_experimentOffRadioButton_toggled(bool checked);
-    void on_furnaceTWantSpinBox_valueChanged(int arg1);
-    void on_experimentManualRadioButton_toggled(bool checked);
-    void on_experimentAutoRadioButton_toggled(bool checked);
     void on_autoMeasFromSpinBox_editingFinished();
     void on_autoMeasToSpinBox_editingFinished();
-    void on_furnaceTWantSpinBox_editingFinished();
+    void on_experiment_fatalError(const QString &errorShort, const QString &errorLong);
+    void on_experiment_furnaceTMeasured(int T);
+    void on_experiment_sampleHeatingUIMeasured(double I, double U);
+    void on_experimentAutoRadioButton_toggled(bool checked);
+    void on_experimentManualRadioButton_toggled(bool checked);
+    void on_experimentOffRadioButton_toggled(bool checked);
+
+    void on_manualApplyFurnacePushButton_clicked();
+    void on_manualApplySamplePushButton_clicked();
 };
 
 #endif // MAINWINDOW_H
