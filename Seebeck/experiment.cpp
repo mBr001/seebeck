@@ -178,28 +178,34 @@ bool Experiment::open_00(const QString &eurothermPort,
         return false;
     }
 
-    Channels_t channels;
+    QSCPIDev::Channels_t channels;
 
     channels.push_back(HP43970_CH_T1);
     channels.push_back(HP43970_CH_T2);
     channels.push_back(HP43970_CH_T3);
     channels.push_back(HP43970_CH_T4);
-    if (!hp34970.setSense(SenseTemp, channels)) {
+    channels.push_back(HP43970_CH_U14);
+    channels.push_back(HP43970_CH_U43);
+    channels.push_back(HP43970_CH_U32);
+    channels.push_back(HP43970_CH_U12);
+    if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4))) {
         sdp_close(&sdp);
         hp34970.close();
         emit fatalError("HP34970 T setup failed", eurotherm.errorString());
         return false;
     }
 
-    channels.clear();
-    channels.push_back(HP43970_CH_U14);
-    channels.push_back(HP43970_CH_U43);
-    channels.push_back(HP43970_CH_U32);
-    channels.push_back(HP43970_CH_U12);
-    if (!hp34970.setSense(SenseVolt, channels)) {
+    if (!hp34970.setSense(QSCPIDev::SenseVolt, channels.mid(4, 4))) {
         sdp_close(&sdp);
         hp34970.close();
         emit fatalError("HP34970 U setup failed", eurotherm.errorString());
+        return false;
+    }
+
+    if (!hp34970.setScan(channels)) {
+        sdp_close(&sdp);
+        hp34970.close();
+        emit fatalError("HP34970 setup scan list", eurotherm.errorString());
         return false;
     }
 
@@ -265,6 +271,33 @@ Experiment::Params_t Experiment::params()
         setError(EurothermError);
     }
     return params;
+}
+
+void Experiment::sampleMeasure()
+{
+    int T1, T2, T3, T4;
+    double U12, U23, U34, U41;
+
+    QStringList values;
+    if (!hp34970.read(&values)) {
+        // TODO
+        return;
+    }
+    // FIXME: check for errors
+    T1 = QVariant(values[0]).toDouble();
+    T2 = QVariant(values[1]).toDouble();
+    T3 = QVariant(values[2]).toDouble();
+    T4 = QVariant(values[3]).toDouble();
+
+    emit sampleTMeasured(T1, T2, T3, T4);
+
+    // FIXME: U is int but init are???
+    U23 = QVariant(values[4]).toDouble();
+    U12 = QVariant(values[3]).toDouble();
+    U34 = QVariant(values[5]).toDouble();
+    U41 = QVariant(values[6]).toDouble();
+
+    emit sampleUMeasured(U12, U23, U34, U41);
 }
 
 void Experiment::setError(ExperimentError_t error, const QString &extraDescription)

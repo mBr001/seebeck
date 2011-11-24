@@ -115,6 +115,22 @@ void MainWindow::on_experiment_sampleHeatingUIMeasured(double I, double U)
     ui->sampleHeatingPDoubleSpinBox->setValue(I*U);
 }
 
+void MainWindow::on_experiment_sampleTMeasured(int T1, int T2, int T3, int T4)
+{
+    ui->sampleT1DoubleSpinBox->setValue(T1);
+    ui->sampleT1DoubleSpinBox->setValue(T2);
+    ui->sampleT1DoubleSpinBox->setValue(T3);
+    ui->sampleT1DoubleSpinBox->setValue(T4);
+}
+
+void MainWindow::on_experiment_sampleUMeasured(double U12, double U23, double U34, double U41)
+{
+    ui->sampleU12DoubleSpinBox->setValue(U12);
+    ui->sampleU23DoubleSpinBox->setValue(U23);
+    ui->sampleU34DoubleSpinBox->setValue(U34);
+    ui->sampleU41DoubleSpinBox->setValue(U41);
+}
+
 void MainWindow::show()
 {
     if (!experiment.open_00(
@@ -169,4 +185,9 @@ void MainWindow::on_manualApplySamplePushButton_clicked()
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
     }
+}
+
+void MainWindow::on_manualStartPushButton_clicked()
+{
+    experiment.sampleMeasure();
 }

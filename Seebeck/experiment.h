@@ -59,6 +59,10 @@ public:
                  const QString &hp34970Port, const QString &msdpPort,
                  const QString &dataDirName);
     Params_t params();
+
+    /** Force sample T and U measurement. */
+    void sampleMeasure();
+
     bool start(const Params_t &params);
     void stop();
 
@@ -136,11 +140,11 @@ signals:
     /** Emited when T of furnace is measured. */
     void furnaceTMeasured(int T);
 
-    /** Emited when real I and U of sample back heating is measured. */
+    /** Emited after process I and U of sample back heating is measured. */
     void sampleHeatingUIMeasured(double I, double U);
 
     void sampleTMeasured(int T1, int T2, int T3, int T4);
-    void sampleUMeasured(int U12, int U23, int U34, int U41);
+    void sampleUMeasured(double U12, double U23, double U34, double U41);
 
 private slots:
     void on_timer_timeout();
