@@ -68,12 +68,12 @@ private:
         COL_TIME = 0,
         COL_STATE,
         COL_FURNACE_T,
+        COL_SAMPLE_HEAT_I,
+        COL_SAMPLE_HEAT_U,
         COL_SAMPLE_T1,
         COL_SAMPLE_T2,
         COL_SAMPLE_T3,
         COL_SAMPLE_T4,
-        COL_SAMPLE_HEAT_I,
-        COL_SAMPLE_HEAT_U,
         COL_SAMPLE_U12,
         COL_SAMPLE_U23,
         COL_SAMPLE_U34,
@@ -91,9 +91,9 @@ private:
         HP43970_CH_T3 = 7,
         HP43970_CH_T4 = 8,
         HP43970_CH_U14 = 9, // 14 ? 41
-        HP43970_CH_U43 = 10, // 34 ? 43
+        HP43970_CH_U43 = 10, // 43 ? 34
         HP43970_CH_U32 = 11, // 32 ? 23
-        HP43970_CH_U12 = 12 // 12 ? 21
+        HP43970_CH_U12 = 12 // 21 ? 12
     } Hp43970Channels_t;
 
     /** Current state of experiment. */

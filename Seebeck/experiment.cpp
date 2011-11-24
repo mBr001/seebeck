@@ -178,7 +178,30 @@ bool Experiment::open_00(const QString &eurothermPort,
         return false;
     }
 
-    // TODO: configure HP34970
+    Channels_t channels;
+
+    channels.push_back(HP43970_CH_T1);
+    channels.push_back(HP43970_CH_T2);
+    channels.push_back(HP43970_CH_T3);
+    channels.push_back(HP43970_CH_T4);
+    if (!hp34970.setSense(SenseTemp, channels)) {
+        sdp_close(&sdp);
+        hp34970.close();
+        emit fatalError("HP34970 T setup failed", eurotherm.errorString());
+        return false;
+    }
+
+    channels.clear();
+    channels.push_back(HP43970_CH_U14);
+    channels.push_back(HP43970_CH_U43);
+    channels.push_back(HP43970_CH_U32);
+    channels.push_back(HP43970_CH_U12);
+    if (!hp34970.setSense(SenseVolt, channels)) {
+        sdp_close(&sdp);
+        hp34970.close();
+        emit fatalError("HP34970 U setup failed", eurotherm.errorString());
+        return false;
+    }
 
     if (!eurotherm.open(eurothermPort, eurothermSlave)) {
         sdp_close(&sdp);
@@ -203,12 +226,12 @@ bool Experiment::open_00(const QString &eurothermPort,
     dataLog.setAt(COL_TIME, "Time\n(UTC)");
     dataLog.setAt(COL_STATE, "State\n");
     dataLog.setAt(COL_FURNACE_T, "Furnace T\n(°C)");
+    dataLog.setAt(COL_SAMPLE_HEAT_I, "Heat I\n(A)");
+    dataLog.setAt(COL_SAMPLE_HEAT_U, "Heat U\n(V)");
     dataLog.setAt(COL_SAMPLE_T1, "Sample T1\n(°C)");
     dataLog.setAt(COL_SAMPLE_T2, "Sample T\n(°C)");
     dataLog.setAt(COL_SAMPLE_T3, "Sample T\n(°C)");
     dataLog.setAt(COL_SAMPLE_T4, "Sample T\n(°C)");
-    dataLog.setAt(COL_SAMPLE_HEAT_I, "Heat I\n(A)");
-    dataLog.setAt(COL_SAMPLE_HEAT_U, "Heat U\n(V)");
     dataLog.setAt(COL_SAMPLE_U12, "Sample U12\n(V)");
     dataLog.setAt(COL_SAMPLE_U23, "Sample U23\n(V)");
     dataLog.setAt(COL_SAMPLE_U34, "Sample U34\n(V)");
