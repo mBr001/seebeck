@@ -79,14 +79,14 @@ bool QModBus::setTarget(int T)
 
 bool QModBus::setProgram(bool enabled)
 {
-    if (modbus_write_register(dev, REG_IM, enabled ? 1 : 0) != 1) {
+    if (modbus_write_register(dev, REG_IM, enabled ? 0 : 1) != 1) {
         errNo = errno;
         return false;
     }
 
     // TODO: check: set output value to 0
     if (!enabled) {
-        if (modbus_write_register(dev, REG_MAN_OP, 0) != 1) {
+       if (modbus_write_register(dev, REG_MAN_OP, 0) != 1) {
             errNo = errno;
             return false;
         }
