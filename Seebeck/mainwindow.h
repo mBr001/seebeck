@@ -39,7 +39,7 @@ private slots:
     void on_experiment_furnaceTMeasured(int T);
     void on_experiment_sampleHeatingUIMeasured(double I, double U);
 
-    void on_experiment_sampleTMeasured(int T1, int T2, int T3, int T4);
+    void on_experiment_sampleTMeasured(double T1, double T2, double T3, double T4);
     void on_experiment_sampleUMeasured(double U12, double U23, double U34, double U41);
 
     void on_experimentAutoRadioButton_toggled(bool checked);

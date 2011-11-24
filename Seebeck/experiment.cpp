@@ -275,7 +275,7 @@ Experiment::Params_t Experiment::params()
 
 void Experiment::sampleMeasure()
 {
-    int T1, T2, T3, T4;
+    double T1, T2, T3, T4;
     double U12, U23, U34, U41;
 
     QStringList values;

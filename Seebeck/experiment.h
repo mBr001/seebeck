@@ -143,7 +143,7 @@ signals:
     /** Emited after process I and U of sample back heating is measured. */
     void sampleHeatingUIMeasured(double I, double U);
 
-    void sampleTMeasured(int T1, int T2, int T3, int T4);
+    void sampleTMeasured(double T1, double T2, double T3, double T4);
     void sampleUMeasured(double U12, double U23, double U34, double U41);
 
 private slots:
