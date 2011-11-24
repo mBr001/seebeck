@@ -45,19 +45,24 @@ void Experiment::doCoolDown()
     // report furnace and sample T
 }
 
+// TODO: co s chybama?
 void Experiment::doStabilize()
 {
     sdp_va_data_t va_data;
 
-    if (sdp_get_va_data(&sdp, &va_data) != SDP_EOK) {
-        // FIMXE: whoops
+    int ret = sdp_get_va_data(&sdp, &va_data);
+    if (ret != SDP_EOK) {
+        emit fatalError("doStabilize - sdp_get_va_data", sdp_strerror(ret));
+        return;
     }
     emit sampleHeatingUIMeasured(va_data.curr, va_data.volt);
+    dataLog.setAt(COL_SAMPLE_HEAT_I, va_data.curr);
+    dataLog.setAt(COL_SAMPLE_HEAT_U, va_data.volt);
 
     int T;
 
     if (!eurotherm.currentT(&T)) {
-        // TODO
+        emit fatalError("doStabilize - eurotherm.currentT", eurotherm.errorString());
         return;
     }
     dataLog.setAt(COL_TIME, QDateTime::currentDateTimeUtc());
@@ -186,7 +191,7 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     QDir dataDir(dataDirName);
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
-    QString fileName(dateStr + ".csv");
+    QString fileName(dateStr + "_all.csv");
     dataLog.setFileName(dataDir.absoluteFilePath(fileName));
     if (!dataLog.open()) {
         sdp_close(&sdp);
