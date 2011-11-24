@@ -242,6 +242,10 @@ bool Experiment::open_00(const QString &eurothermPort,
     dataLog.setAt(COL_SAMPLE_U23, "Sample U23\n(V)");
     dataLog.setAt(COL_SAMPLE_U34, "Sample U34\n(V)");
     dataLog.setAt(COL_SAMPLE_U41, "Sample U41\n(V)");
+    if (!dataLog.write()) {
+        emit fatalError("CSV file write failed", "Failed to write CSV file header");
+        return false;
+    }
 
     // TODO: get from device
     //paramsf.furnacePower = ;
@@ -290,13 +294,23 @@ void Experiment::sampleMeasure()
     T3 = QVariant(values[2]).toDouble();
     T4 = QVariant(values[3]).toDouble();
 
+    dataLog.setAt(COL_SAMPLE_T1, T1);
+    dataLog.setAt(COL_SAMPLE_T2, T2);
+    dataLog.setAt(COL_SAMPLE_T3, T3);
+    dataLog.setAt(COL_SAMPLE_T4, T4);
+
     emit sampleTMeasured(T1, T2, T3, T4);
 
-    // FIXME: U is int but init are???
+    // FIXME: U order
     U23 = QVariant(values[4]).toDouble();
     U12 = QVariant(values[5]).toDouble();
     U34 = QVariant(values[6]).toDouble();
     U41 = QVariant(values[7]).toDouble();
+
+    dataLog.setAt(COL_SAMPLE_U12, U12);
+    dataLog.setAt(COL_SAMPLE_U23, U23);
+    dataLog.setAt(COL_SAMPLE_U34, U34);
+    dataLog.setAt(COL_SAMPLE_U41, U41);
 
     emit sampleUMeasured(U12, U23, U34, U41);
 }
