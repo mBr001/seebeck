@@ -125,6 +125,7 @@ private:
 
     /** The period during which furnace temperature is stable. */
     int furnaceStableTime;
+    QList<double> furnaceTvalues;
 
     void doCoolDown();
     void doStabilize();
@@ -138,7 +139,7 @@ signals:
     void finished();
 
     /** Emited when T of furnace is measured. */
-    void furnaceTMeasured(int T);
+    void furnaceTMeasured(int T, double Tstraggling);
 
     /** Emited after process I and U of sample back heating is measured. */
     void sampleHeatingUIMeasured(double I, double U);

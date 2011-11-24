@@ -68,8 +68,23 @@ void Experiment::doStabilize()
     dataLog.setAt(COL_TIME, QDateTime::currentDateTimeUtc());
     dataLog.setAt(COL_FURNACE_T, T);
     if (!dataLog.write()) {
-       } // TODO
-    emit furnaceTMeasured(T);
+        // TODO
+        emit fatalError("TODO", "TODO");
+        return;
+    }
+
+    furnaceTvalues.push_front(T);
+    furnaceTvalues.pop_back();
+    double Tmean = 0.0;
+    foreach (double _T_, furnaceTvalues) { Tmean += _T_; }
+    Tmean /= (double)furnaceTvalues.size();
+    double Ts = 0.0;
+    foreach (double _T_, furnaceTvalues) {
+        double dT = _T_ - Tmean;
+        Ts += dT * dT;
+    }
+    Ts = sqrt(Ts);
+    emit furnaceTMeasured(T, Ts);
 
     if ( fabs(T - paramsf.furnaceT) < paramsf.furnaceSettleTStraggling) {
         furnaceStableTime += timerDwell;
@@ -81,9 +96,9 @@ void Experiment::doStabilize()
         return;
     }
 
-    QStringList values;
-    if (!hp34970.read(&values)) {
-    } // TODO
+    //QStringList values;
+    //if (!hp34970.read(&values)) {
+    //} // TODO
 
     // parse values
     // write to log
@@ -331,6 +346,15 @@ bool Experiment::start(const Params_t &params)
     state = STATE_STABILIZE;
     this->paramsf = params;
     furnaceStableTime = 0;
+
+    // Create vector for moving T avarage
+    double period = 1000. / timerDwell;
+    while(furnaceTvalues.size() > (period * params.furnaceSettleTime)) {
+        furnaceTvalues.pop_back();
+    }
+    while(furnaceTvalues.size() <= (period * params.furnaceSettleTime)) {
+        furnaceTvalues.push_back(0.0);
+    }
 
     if (!eurotherm.setTarget(params.furnaceT))
     {

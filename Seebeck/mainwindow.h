@@ -36,7 +36,7 @@ private slots:
     void on_autoMeasFromSpinBox_editingFinished();
     void on_autoMeasToSpinBox_editingFinished();
     void on_experiment_fatalError(const QString &errorShort, const QString &errorLong);
-    void on_experiment_furnaceTMeasured(int T);
+    void on_experiment_furnaceTMeasured(int T, double Tstraggling);
     void on_experiment_sampleHeatingUIMeasured(double I, double U);
 
     void on_experiment_sampleTMeasured(double T1, double T2, double T3, double T4);

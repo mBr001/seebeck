@@ -68,9 +68,10 @@ void MainWindow::on_autoMeasToSpinBox_editingFinished()
     }
 }
 
-void MainWindow::on_experiment_furnaceTMeasured(int T)
+void MainWindow::on_experiment_furnaceTMeasured(int T, double Tstraggling)
 {
     ui->furnaceTSpinBox->setValue(T);
+    ui->furnaceTStragglingDoubleSpinBox->setValue(Tstraggling);
 }
 
 void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
@@ -91,7 +92,7 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
     Experiment::Params_t params;
 
     params.furnacePower = true;
-    params.furnaceSettleTime = ui->manualFurnaceTSpinBox->value();
+    params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
     params.furnaceSettleTStraggling = 0;
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
     params.sampleI = ui->manualSampleIDoubleSpinBox->value();
@@ -171,6 +172,8 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
 {
     Experiment::Params_t params(experiment.params());
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
+    params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
+
     if (!experiment.start(params))
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
