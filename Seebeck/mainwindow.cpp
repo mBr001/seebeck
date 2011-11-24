@@ -118,9 +118,9 @@ void MainWindow::on_experiment_sampleHeatingUIMeasured(double I, double U)
 void MainWindow::on_experiment_sampleTMeasured(int T1, int T2, int T3, int T4)
 {
     ui->sampleT1DoubleSpinBox->setValue(T1);
-    ui->sampleT1DoubleSpinBox->setValue(T2);
-    ui->sampleT1DoubleSpinBox->setValue(T3);
-    ui->sampleT1DoubleSpinBox->setValue(T4);
+    ui->sampleT2DoubleSpinBox->setValue(T2);
+    ui->sampleT3DoubleSpinBox->setValue(T3);
+    ui->sampleT4DoubleSpinBox->setValue(T4);
 }
 
 void MainWindow::on_experiment_sampleUMeasured(double U12, double U23, double U34, double U41)

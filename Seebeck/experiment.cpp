@@ -279,7 +279,8 @@ void Experiment::sampleMeasure()
     double U12, U23, U34, U41;
 
     QStringList values;
-    if (!hp34970.read(&values)) {
+    // FIXME: prijal nekompletni radek a pri timeoutu nepochybyl
+    if (!hp34970.read(&values, 2000000)) {
         // TODO
         return;
     }
@@ -293,9 +294,9 @@ void Experiment::sampleMeasure()
 
     // FIXME: U is int but init are???
     U23 = QVariant(values[4]).toDouble();
-    U12 = QVariant(values[3]).toDouble();
-    U34 = QVariant(values[5]).toDouble();
-    U41 = QVariant(values[6]).toDouble();
+    U12 = QVariant(values[5]).toDouble();
+    U34 = QVariant(values[6]).toDouble();
+    U41 = QVariant(values[7]).toDouble();
 
     emit sampleUMeasured(U12, U23, U34, U41);
 }
