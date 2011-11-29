@@ -12,12 +12,14 @@ public:
     QString eurothermPort();
     int eurothermSlave();
     QString hp34970Port();
+    QString ps6220Port();
     QString msdpPort();
 
     void setDataDir(const QString &dirName);
     void setEurothermPort(const QString &port);
     void setEurothermSlave(int slave);
     void setHp34970Port(const QString &port);
+    void setPs6220Port(const QString &port);
     void setMsdpPort(const QString &port);
 
 private:
@@ -28,6 +30,7 @@ private:
     static const char str_eurotherm_slave[];
     static const char str_hp34970_port[];
     static const char str_msdp_port[];
+    static const char str_ps6220_port[];
 };
 
 #endif // CONFIG_H
