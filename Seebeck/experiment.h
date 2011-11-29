@@ -35,12 +35,16 @@ public:
           * clasicied as stedy. */
         double furnaceSettleTime;
 
+        /** Current used to measure sample rezistivity. */
+        double rezistivityI;
+
         /** Current uset for sample heating. */
         double sampleI;
 
         Params_t() :
             furnacePower(false), furnaceT(-274),
-            furnaceSettleTStraggling(-1), furnaceSettleTime(-1), sampleI(-1)
+            furnaceSettleTStraggling(-1), furnaceSettleTime(-1),
+            rezistivityI(NAN), sampleI(-1)
         {}
     };
 
@@ -82,6 +86,8 @@ private:
         COL_SAMPLE_U23,
         COL_SAMPLE_U34,
         COL_SAMPLE_U41,
+        COL_SAMPLE_RES_I,
+        COL_SAMPLE_RES_U,
         // not a real column, define number of columns
         COL_END
     } CsvLogColumns_t;

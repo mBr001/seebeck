@@ -25,12 +25,13 @@ bool Experiment::checkParams(const Params_t &params) const
     return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
             && params.furnaceT >= -273 && params.furnaceT < 5000
             && params.furnaceSettleTStraggling >= 0 && params.furnaceSettleTStraggling < 5000
-            && params.sampleI >= 0 && params.sampleI <= sdp_va_maximums.curr);
+            && params.sampleI >= 0 && params.sampleI <= sdp_va_maximums.curr
+            && params.rezistivityI > 0);
 }
 
 void Experiment::close()
 {
-    // TODO is expefriment running? -> stop
+    // TODO is experiment running? -> stop
     timer.stop();
     sdp_close(&sdp);
     hp34970.close();
@@ -257,6 +258,8 @@ bool Experiment::open_00(const QString &eurothermPort,
     dataLog.setAt(COL_SAMPLE_U23, "Sample U23\n(V)");
     dataLog.setAt(COL_SAMPLE_U34, "Sample U34\n(V)");
     dataLog.setAt(COL_SAMPLE_U41, "Sample U41\n(V)");
+    dataLog.setAt(COL_SAMPLE_RES_I, "Sample res. I\n(A)");
+    dataLog.setAt(COL_SAMPLE_RES_U, "Sample res. U\n(V)");
     if (!dataLog.write()) {
         emit fatalError("CSV file write failed", "Failed to write CSV file header");
         return false;
