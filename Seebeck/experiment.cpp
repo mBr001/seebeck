@@ -195,14 +195,14 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     QSCPIDev::Channels_t channels;
 
-    channels.push_back(HP43970_CH_T1);
-    channels.push_back(HP43970_CH_T2);
-    channels.push_back(HP43970_CH_T3);
-    channels.push_back(HP43970_CH_T4);
-    channels.push_back(HP43970_CH_U14);
-    channels.push_back(HP43970_CH_U43);
-    channels.push_back(HP43970_CH_U32);
-    channels.push_back(HP43970_CH_U12);
+    channels.push_back(HP34901_CH_T1);
+    channels.push_back(HP34901_CH_T2);
+    channels.push_back(HP34901_CH_T3);
+    channels.push_back(HP34901_CH_T4);
+    channels.push_back(HP34901_CH_U14);
+    channels.push_back(HP34901_CH_U43);
+    channels.push_back(HP34901_CH_U32);
+    channels.push_back(HP34901_CH_U12);
     if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4))) {
         sdp_close(&sdp);
         hp34970.close();

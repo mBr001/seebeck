@@ -90,15 +90,22 @@ private:
     // (CSV, to catch variation during time)
 
     typedef enum {
-        HP43970_CH_T1 = 105,
-        HP43970_CH_T2 = 106,
-        HP43970_CH_T3 = 107,
-        HP43970_CH_T4 = 108,
-        HP43970_CH_U14 = 109, // 14 ? 41
-        HP43970_CH_U43 = 110, // 43 ? 34
-        HP43970_CH_U32 = 111, // 32 ? 23
-        HP43970_CH_U12 = 112 // 21 ? 12
-    } Hp43970Channels_t;
+        HP34901_CH_T1 = 105,
+        HP34901_CH_T2 = 106,
+        HP34901_CH_T3 = 107,
+        HP34901_CH_T4 = 108,
+        HP34901_CH_U14 = 109, // 14 ? 41
+        HP34901_CH_U43 = 110, // 43 ? 34
+        HP34901_CH_U32 = 111, // 32 ? 23
+        HP34901_CH_U12 = 112, // 21 ? 12
+        HP34901_CH_XXX = 113,
+        HP34901_CH_R = 114
+    } HP34901Channels_t;
+
+    typedef enum {
+        HP34903_CH_I1 = 207,
+        HP34903_CH_I2 = 208
+    } HP34903Chennels_t;
 
     /** Current state of experiment. */
     typedef enum {
