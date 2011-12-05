@@ -91,11 +91,11 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
 
     Experiment::Params_t params;
 
-    params.furnacePower = true;
+    params.furnaceHeatingOn = true;
     params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
     params.furnaceSettleTStraggling = 0;
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
-    params.sampleI = ui->manualSampleIDoubleSpinBox->value();
+    params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
 
     if (!experiment.start(params))
     {
@@ -183,7 +183,7 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
 void MainWindow::on_manualApplySamplePushButton_clicked()
 {
     Experiment::Params_t params(experiment.params());
-    params.sampleI = ui->manualSampleIDoubleSpinBox->value();
+    params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
     if (!experiment.start(params))
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
@@ -193,4 +193,10 @@ void MainWindow::on_manualApplySamplePushButton_clicked()
 void MainWindow::on_manualStartPushButton_clicked()
 {
     experiment.sampleMeasure();
+}
+
+void MainWindow::on_sampleSPushButton_clicked()
+{
+    ui->sampleSDubleSpinBox->setValue(ui->sampleWidthDoubleSpinBox->value() *
+                                      ui->sampleHeightDoubleSpinBox->value());
 }

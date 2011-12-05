@@ -5,6 +5,18 @@
 
 const double Experiment::timerDwell = 1000;
 
+Experiment::SampleParams::SampleParams() :
+    l1(NAN), l2(NAN), l3(NAN), S(NAN)
+{}
+
+bool Experiment::SampleParams::isValid() const
+{
+    return (l1 >= 0 && isfinite(l1) &&
+            l2 > 0 && isfinite(l2) &&
+            l3 >= 0 && isfinite(l3) &&
+            S > 0 && isfinite(S));
+}
+
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
     dataLog(COL_END),
@@ -25,7 +37,7 @@ bool Experiment::checkParams(const Params_t &params) const
     return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
             && params.furnaceT >= -273 && params.furnaceT < 5000
             && params.furnaceSettleTStraggling >= 0 && params.furnaceSettleTStraggling < 5000
-            && params.sampleI >= 0 && params.sampleI <= sdp_va_maximums.curr
+            && params.sampleHeatingI >= 0 && params.sampleHeatingI <= sdp_va_maximums.curr
             && params.rezistivityI > 0);
 }
 
@@ -278,7 +290,7 @@ bool Experiment::open_00(const QString &eurothermPort,
         emit fatalError("Failed to get I form PS", sdp_strerror(sdp_ret));
         return false;
     }
-    paramsf.sampleI = va_data.curr;
+    paramsf.sampleHeatingI = va_data.curr;
 
     timer.start();
 
@@ -333,10 +345,22 @@ void Experiment::sampleMeasure()
     emit sampleUMeasured(U12, U23, U34, U41);
 }
 
+const Experiment::SampleParams& Experiment::sampleParams() const
+{
+    return sampleParamsf;
+}
+
 void Experiment::setError(ExperimentError_t error, const QString &extraDescription)
 {
     errorf = error;
     errorStringf = extraDescription;
+}
+
+
+void Experiment::setSampleParams(const SampleParams& val)
+{
+    if (val.isValid())
+        sampleParamsf = val;
 }
 
 bool Experiment::start(const Params_t &params)
@@ -377,7 +401,7 @@ bool Experiment::start(const Params_t &params)
 
     int sdp_ret;
 
-    sdp_ret = sdp_set_curr(&sdp, params.sampleI);
+    sdp_ret = sdp_set_curr(&sdp, params.sampleHeatingI);
     if (sdp_ret != SDP_EOK)
         goto sdp_err;
     sdp_ret = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);

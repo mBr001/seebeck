@@ -49,6 +49,7 @@ private slots:
     void on_manualApplyFurnacePushButton_clicked();
     void on_manualApplySamplePushButton_clicked();
     void on_manualStartPushButton_clicked();
+    void on_sampleSPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

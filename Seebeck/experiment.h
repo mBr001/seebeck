@@ -23,7 +23,7 @@ public:
     class Params_t {
     public:
         /** Turn furnace power on/off. */
-        bool furnacePower;
+        bool furnaceHeatingOn;
 
         /** Wanted furnace temperature (°C). */
         int furnaceT;
@@ -39,13 +39,33 @@ public:
         double rezistivityI;
 
         /** Current uset for sample heating. */
-        double sampleI;
+        double sampleHeatingI;
 
         Params_t() :
-            furnacePower(false), furnaceT(-274),
+            furnaceHeatingOn(false), furnaceT(-274),
             furnaceSettleTStraggling(-1), furnaceSettleTime(-1),
-            rezistivityI(NAN), sampleI(-1)
+            rezistivityI(NAN), sampleHeatingI(-1)
         {}
+    };
+
+    class SampleParams {
+    public:
+        /** Lenght from back side of sample to first measurement point. [m] */
+        double l1;
+
+        /** Distance betwen measurement points. [m] */
+        double l2;
+
+        /** Lenght from second measurement point to fron of sample. [m] */
+        double l3;
+
+        /** Surface of sample orthogonal to "lenght" axis. */
+        double S;
+
+        SampleParams();
+
+        /** Check values for validity. */
+        bool isValid() const;
     };
 
     explicit Experiment(QObject *parent = 0);
@@ -66,6 +86,9 @@ public:
 
     /** Force sample T and U measurement. */
     void sampleMeasure();
+
+    const SampleParams& sampleParams() const;
+    void setSampleParams(const SampleParams& val);
 
     bool start(const Params_t &params);
     void stop();
@@ -129,6 +152,7 @@ private:
     ExperimentError_t errorf;
     QString errorStringf;
     Params_t paramsf;
+    SampleParams sampleParamsf;
 
     State_t state;
     /** Timer for measurement. */
