@@ -1244,6 +1244,61 @@ p, li { white-space: pre-wrap; }
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>experimentOffRadioButton</tabstop>
+  <tabstop>experimentManualRadioButton</tabstop>
+  <tabstop>experimentAutoRadioButton</tabstop>
+  <tabstop>furnaceTSpinBox</tabstop>
+  <tabstop>furnaceTStragglingDoubleSpinBox</tabstop>
+  <tabstop>sampleT1DoubleSpinBox</tabstop>
+  <tabstop>sampleT2DoubleSpinBox</tabstop>
+  <tabstop>sampleT3DoubleSpinBox</tabstop>
+  <tabstop>sampleT4DoubleSpinBox</tabstop>
+  <tabstop>sampleU12DoubleSpinBox</tabstop>
+  <tabstop>sampleU23DoubleSpinBox</tabstop>
+  <tabstop>sampleU34DoubleSpinBox</tabstop>
+  <tabstop>sampleU41DoubleSpinBox</tabstop>
+  <tabstop>sampleHeatingIDoubleSpinBox</tabstop>
+  <tabstop>sampleHeatingUDoubleSpinBox</tabstop>
+  <tabstop>sampleHeatingPDoubleSpinBox</tabstop>
+  <tabstop>sampleTabWidget</tabstop>
+  <tabstop>sampleL1DoubleSpinBox</tabstop>
+  <tabstop>sampleL2DoubleSpinBox</tabstop>
+  <tabstop>sampleL3DoubleSpinBox</tabstop>
+  <tabstop>sampleLDoubleSpinBox</tabstop>
+  <tabstop>sampleWidthDoubleSpinBox</tabstop>
+  <tabstop>sampleHeightDoubleSpinBox</tabstop>
+  <tabstop>sampleSPushButton</tabstop>
+  <tabstop>sampleSDubleSpinBox</tabstop>
+  <tabstop>manualFurnaceTSpinBox</tabstop>
+  <tabstop>manualSettleTimeSpinBox</tabstop>
+  <tabstop>manualApplyFurnacePushButton</tabstop>
+  <tabstop>manualModeCurrentRadioButton</tabstop>
+  <tabstop>manualModePowerRadioButton</tabstop>
+  <tabstop>manualSampleIDoubleSpinBox</tabstop>
+  <tabstop>manualSamplePDoubleSpinBox</tabstop>
+  <tabstop>manualApplySamplePushButton</tabstop>
+  <tabstop>autoMeasFromSpinBox</tabstop>
+  <tabstop>autoMeasToSpinBox</tabstop>
+  <tabstop>autoMeasStepSpinBox</tabstop>
+  <tabstop>autoMeasSettleTimeSpinBox</tabstop>
+  <tabstop>autoMeasTStragglingDoubleSpinBox</tabstop>
+  <tabstop>autoMeasModeCurrentRadioButton</tabstop>
+  <tabstop>autoMeasModePowerRadioButton</tabstop>
+  <tabstop>autoMeasSampleFromDoubleSpinBox</tabstop>
+  <tabstop>autoMeasSampleToDoubleSpinBox</tabstop>
+  <tabstop>autoMeasSampleStepDoubleSpinBox</tabstop>
+  <tabstop>autoMeasCyclesSpinBox</tabstop>
+  <tabstop>autoMeasRisingCheckBox</tabstop>
+  <tabstop>autoMeasFallingCheckBox</tabstop>
+  <tabstop>autoMeasEstimatedTimeEdit</tabstop>
+  <tabstop>autoMeasPointCountSpinBox</tabstop>
+  <tabstop>autoMeasElapsedTimeEdit</tabstop>
+  <tabstop>spinBox_2</tabstop>
+  <tabstop>autoMeasStartPushButton</tabstop>
+  <tabstop>manualCountSpinBox</tabstop>
+  <tabstop>manualStartPushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
