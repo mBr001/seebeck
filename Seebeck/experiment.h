@@ -120,7 +120,7 @@ private:
         STATE_COOLDOWN
     } State_t;
 
-    QCSVFileWriter dataLog;
+    QCSVWriter dataLog;
     QModBus eurotherm;
     QSCPIDev hp34970;
     sdp_t sdp;

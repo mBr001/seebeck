@@ -57,8 +57,8 @@ void Experiment::doStabilize()
         return;
     }
     emit sampleHeatingUIMeasured(va_data.curr, va_data.volt);
-    dataLog.setAt(COL_SAMPLE_HEAT_I, va_data.curr);
-    dataLog.setAt(COL_SAMPLE_HEAT_U, va_data.volt);
+    dataLog[COL_SAMPLE_HEAT_I] = va_data.curr;
+    dataLog[COL_SAMPLE_HEAT_U] = va_data.volt;
 
     int T;
 
@@ -66,8 +66,8 @@ void Experiment::doStabilize()
         emit fatalError("doStabilize - eurotherm.currentT", eurotherm.errorString());
         return;
     }
-    dataLog.setAt(COL_TIME, QDateTime::currentDateTimeUtc());
-    dataLog.setAt(COL_FURNACE_T, T);
+    dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
+    dataLog[COL_FURNACE_T] = T;
     if (!dataLog.write()) {
         // TODO
         emit fatalError("TODO", "TODO");
@@ -245,21 +245,21 @@ bool Experiment::open_00(const QString &eurothermPort,
         emit fatalError("Failed to open data log file", dataLog.errorString());
         return false;
     }
-    dataLog.setAt(COL_TIME, "Time\n(UTC)");
-    dataLog.setAt(COL_STATE, "State\n");
-    dataLog.setAt(COL_FURNACE_T, "Furnace T\n(°C)");
-    dataLog.setAt(COL_SAMPLE_HEAT_I, "Heat I\n(A)");
-    dataLog.setAt(COL_SAMPLE_HEAT_U, "Heat U\n(V)");
-    dataLog.setAt(COL_SAMPLE_T1, "Sample T1\n(°C)");
-    dataLog.setAt(COL_SAMPLE_T2, "Sample T\n(°C)");
-    dataLog.setAt(COL_SAMPLE_T3, "Sample T\n(°C)");
-    dataLog.setAt(COL_SAMPLE_T4, "Sample T\n(°C)");
-    dataLog.setAt(COL_SAMPLE_U12, "Sample U12\n(V)");
-    dataLog.setAt(COL_SAMPLE_U23, "Sample U23\n(V)");
-    dataLog.setAt(COL_SAMPLE_U34, "Sample U34\n(V)");
-    dataLog.setAt(COL_SAMPLE_U41, "Sample U41\n(V)");
-    dataLog.setAt(COL_SAMPLE_RES_I, "Sample res. I\n(A)");
-    dataLog.setAt(COL_SAMPLE_RES_U, "Sample res. U\n(V)");
+    dataLog[COL_TIME] = "Time\n(UTC)";
+    dataLog[COL_STATE] = "State\n";
+    dataLog[COL_FURNACE_T] = "Furnace T\n(°C)";
+    dataLog[COL_SAMPLE_HEAT_I] = "Heat I\n(A)";
+    dataLog[COL_SAMPLE_HEAT_U] = "Heat U\n(V)";
+    dataLog[COL_SAMPLE_T1] = "Sample T1\n(°C)";
+    dataLog[COL_SAMPLE_T2] = "Sample T\n(°C)";
+    dataLog[COL_SAMPLE_T3] = "Sample T\n(°C)";
+    dataLog[COL_SAMPLE_T4] = "Sample T\n(°C)";
+    dataLog[COL_SAMPLE_U12] = "Sample U12\n(V)";
+    dataLog[COL_SAMPLE_U23] = "Sample U23\n(V)";
+    dataLog[COL_SAMPLE_U34] = "Sample U34\n(V)";
+    dataLog[COL_SAMPLE_U41] = "Sample U41\n(V)";
+    dataLog[COL_SAMPLE_RES_I] = "Sample res. I\n(A)";
+    dataLog[COL_SAMPLE_RES_U] = "Sample res. U\n(V)";
     if (!dataLog.write()) {
         emit fatalError("CSV file write failed", "Failed to write CSV file header");
         return false;
@@ -312,10 +312,10 @@ void Experiment::sampleMeasure()
     T3 = QVariant(values[2]).toDouble();
     T4 = QVariant(values[3]).toDouble();
 
-    dataLog.setAt(COL_SAMPLE_T1, T1);
-    dataLog.setAt(COL_SAMPLE_T2, T2);
-    dataLog.setAt(COL_SAMPLE_T3, T3);
-    dataLog.setAt(COL_SAMPLE_T4, T4);
+    dataLog[COL_SAMPLE_T1] = T1;
+    dataLog[COL_SAMPLE_T2] = T2;
+    dataLog[COL_SAMPLE_T3] = T3;
+    dataLog[COL_SAMPLE_T4] = T4;
 
     emit sampleTMeasured(T1, T2, T3, T4);
 
@@ -325,10 +325,10 @@ void Experiment::sampleMeasure()
     U34 = QVariant(values[6]).toDouble();
     U41 = QVariant(values[7]).toDouble();
 
-    dataLog.setAt(COL_SAMPLE_U12, U12);
-    dataLog.setAt(COL_SAMPLE_U23, U23);
-    dataLog.setAt(COL_SAMPLE_U34, U34);
-    dataLog.setAt(COL_SAMPLE_U41, U41);
+    dataLog[COL_SAMPLE_U12] = U12;
+    dataLog[COL_SAMPLE_U23] = U23;
+    dataLog[COL_SAMPLE_U34] = U34;
+    dataLog[COL_SAMPLE_U41] = U41;
 
     emit sampleUMeasured(U12, U23, U34, U41);
 }
