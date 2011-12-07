@@ -19,9 +19,9 @@ limitations under the License.
 Application driver seebeck measurement experiment usign customized laboratory
 equipment. Experiment consists of:
   * HP 34970A with
-    * HP 34
-    * HP 34
+    * HP 34 901A card
+    * HP 34 903A card
   * Manson SDP power supply
   * Eurotherm ??? regulator
-
+  * Keithley 6220 current source
 
