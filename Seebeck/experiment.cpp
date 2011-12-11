@@ -32,6 +32,11 @@ Experiment::Experiment(QObject *parent) :
     QMetaObject::connectSlotsByName(this);
 }
 
+void Experiment::abort()
+{
+
+}
+
 bool Experiment::checkParams(const Params_t &params) const
 {
     return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
@@ -202,7 +207,7 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     if (!hp34970.open(hp34970Port)) {
         sdp_close(&sdp);
-        emit fatalError("Open HP34970 failed", hp34970.errorStr());
+        emit fatalError("Open HP34970 failed", hp34970.errorString());
         return false;
     }
 
@@ -219,21 +224,21 @@ bool Experiment::open_00(const QString &eurothermPort,
     if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4))) {
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("HP34970 T setup failed", eurotherm.errorString());
+        emit fatalError("HP34970 T setup failed", hp34970.errorString());
         return false;
     }
 
     if (!hp34970.setSense(QSCPIDev::SenseVolt, channels.mid(4, 4))) {
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("HP34970 U setup failed", eurotherm.errorString());
+        emit fatalError("HP34970 U setup failed", hp34970.errorString());
         return false;
     }
 
     if (!hp34970.setScan(channels)) {
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("HP34970 setup scan list", eurotherm.errorString());
+        emit fatalError("HP34970 setup scan list", hp34970.errorString());
         return false;
     }
 
@@ -361,6 +366,11 @@ void Experiment::setSampleParams(const SampleParams& val)
 {
     if (val.isValid())
         sampleParamsf = val;
+}
+
+bool Experiment::setup()
+{
+    return false;
 }
 
 bool Experiment::start(const Params_t &params)

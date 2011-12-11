@@ -70,6 +70,7 @@ public:
 
     explicit Experiment(QObject *parent = 0);
 
+    void abort();
     bool checkParams(const Params_t &params) const;
     void close();
     ExperimentError_t error() const;
@@ -83,6 +84,7 @@ public:
                  const QString &hp34970Port, const QString &msdpPort,
                  const QString &dataDirName);
     Params_t params();
+    bool setup();
 
     /** Force sample T and U measurement. */
     void sampleMeasure();
