@@ -33,4 +33,5 @@ FORMS    += mainwindow.ui \
 
 OTHER_FILES += \
     ../README \
-    ../INSTALL.txt
+    ../INSTALL.txt \
+    seebeck_pec.dia

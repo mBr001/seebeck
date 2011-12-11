@@ -401,7 +401,7 @@ bool Experiment::start(const Params_t &params)
         return false;
     }
 
-    if (!eurotherm.setProgram(true))
+    if (!eurotherm.setEnabled(true))
     {
         // TODO
         setError(EurothermError);
@@ -436,5 +436,5 @@ sdp_err:
 void Experiment::stop()
 {
     sdp_set_output(&sdp, 0);
-    eurotherm.setProgram(false);
+    eurotherm.setEnabled(false);
 }

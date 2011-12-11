@@ -45,6 +45,11 @@ bool QModBus::isOpen() const
     return (dev != NULL);
 }
 
+bool QModBus::mode(bool *)
+{
+    return false;
+}
+
 bool QModBus::open(const QString &port, int slave)
 {
     dev = modbus_new_rtu(port.toLocal8Bit().constData(), 9600, 'N', 8, 1);
@@ -67,19 +72,9 @@ bool QModBus::open(const QString &port, int slave)
     return true;
 }
 
-bool QModBus::setTarget(int T)
+bool QModBus::setEnabled(bool enabled)
 {
-    if (modbus_write_register(dev, REG_SP1, T) != 1) {
-        errNo = errno;
-        return false;
-    }
-
-    return true;
-}
-
-bool QModBus::setProgram(bool enabled)
-{
-    if (modbus_write_register(dev, REG_IM, enabled ? 0 : 1) != 1) {
+    if (modbus_write_register(dev, REG_IM, enabled ? REG_IM_AUTO : REG_IM_MANUAL) != 1) {
         errNo = errno;
         return false;
     }
@@ -91,6 +86,16 @@ bool QModBus::setProgram(bool enabled)
             return false;
         }
     }
+    return true;
+}
+
+bool QModBus::setTarget(int T)
+{
+    if (modbus_write_register(dev, REG_SP1, T) != 1) {
+        errNo = errno;
+        return false;
+    }
+
     return true;
 }
 

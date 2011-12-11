@@ -7,22 +7,6 @@
 class QModBus : public QObject
 {
     Q_OBJECT
-public:
-
-    explicit QModBus(QObject *parent = 0);
-    ~QModBus();
-
-    void close();
-    bool currentT(int *T);
-    int error() const;
-    QString errorString() const;
-    bool isOpen() const;
-    bool open(const QString &port, int addr);
-    bool setTarget(int T);
-    bool setProgram(bool enabled);
-    bool targetT(int *T);
-    bool targetTRange(int *Tmin, int *Tmax);
-
 private:
     typedef enum {
         /** Temperature input value. */
@@ -51,8 +35,30 @@ private:
         REG_A_M = 273
     } Registers;
 
+    typedef enum {
+        REG_IM_AUTO = 0,
+        REG_IM_MANUAL = 1,
+        REG_IM_STANDBY = 2
+    } InstrumentMode_t;
+
     modbus_t *dev;
     int errNo;
+
+public:
+    explicit QModBus(QObject *parent = 0);
+    ~QModBus();
+
+    void close();
+    bool currentT(int *T);
+    int error() const;
+    QString errorString() const;
+    bool isOpen() const;
+    bool mode(bool *enabled);
+    bool open(const QString &port, int addr);
+    bool setEnabled(bool enabled);
+    bool setTarget(int T);
+    bool targetT(int *T);
+    bool targetTRange(int *Tmin, int *Tmax);
 
 signals:
 
