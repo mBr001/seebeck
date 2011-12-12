@@ -74,39 +74,42 @@ void MainWindow::on_experiment_furnaceTMeasured(int T, double Tstraggling)
     ui->furnaceTStragglingDoubleSpinBox->setValue(Tstraggling);
 }
 
-void MainWindow::on_experimentAutoRadioButton_toggled(bool checked)
-{
-    ui->automatedTab->setEnabled(checked);
-
-    if (!checked)
-        return;
-}
-
-void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
-{
-    ui->manualTab->setEnabled(checked);
-
-    if (!checked)
-        return;
-
-    Experiment::RunParams params;
-
-    params.furnaceHeatingOn = true;
-    params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
-    params.furnaceSettleTStraggling = 0;
-    params.furnaceT = ui->manualFurnaceTSpinBox->value();
-    params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
-
-    if (!experiment.start(params))
-    {
-        on_experiment_fatalError("Failed to start experiment", experiment.errorString());
-    }
-}
-
 void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
 {
-    if (checked)
-        experiment.abort();
+    if (checked) {
+        if (experiment.isRunning() || experiment.isSetup()) {
+            if (!experiment.abort()) {
+                on_experiment_fatalError("Failed to interrupt experiment",
+                                         experiment.errorString());
+            }
+        }
+    }
+
+    if (!checked) {
+        Experiment::SetupParams params;
+
+        params.experimentator = ui->experimentatorLineEdit->text();
+        params.resistivityI = ui->resistivityIDoubleSpinBox->value();
+        params.sample.l1 = ui->sampleL1DoubleSpinBox->value();
+        params.sample.l2 = ui->sampleL2DoubleSpinBox->value();
+        params.sample.l3 = ui->sampleL3DoubleSpinBox->value();
+        params.sample.S = ui->sampleSDubleSpinBox->value();
+        params.sampleId = ui->sampleIdLineEdit->text();
+
+        if (!experiment.setup(params)) {
+            QString errTitle("Failed to setup experiment");
+
+            if (experiment.error() == Experiment::ERR_VALUE) {
+                QMessageBox::critical(this, errTitle, experiment.errorString());
+                return;
+            }
+            on_experiment_fatalError(errTitle, experiment.errorString());
+        }
+    }
+
+
+    ui->automatedTab->setEnabled(ui->experimentAutoRadioButton->isChecked());
+    ui->manualTab->setEnabled(ui->experimentManualRadioButton->isChecked());
     ui->settingsOtherGroupBox->setEnabled(checked);
     ui->settingsSampleGroupBox->setEnabled(checked);
 }
@@ -180,7 +183,7 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
     params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
 
-    if (!experiment.start(params))
+    if (!experiment.run(params))
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
     }
@@ -190,7 +193,7 @@ void MainWindow::on_manualApplySamplePushButton_clicked()
 {
     Experiment::RunParams params(experiment.runParams());
     params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
-    if (!experiment.start(params))
+    if (!experiment.run(params))
     {
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
     }

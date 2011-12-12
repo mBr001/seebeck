@@ -16,7 +16,7 @@ class Experiment : public QObject
 public:
     typedef enum {
         ERR_OK = 0,
-        ERR_INVALID_VALUE,
+        ERR_VALUE,
         ERR_EUROTHERM,
         ERR_MSDP,
         ERR_HP34970,
@@ -119,24 +119,24 @@ public:
     QString errorString() const;
     bool furnaceTRange(int *Tmin, int *Tmax);
 
-    // When changing prototype, change numeric suffix.
-    // This is simple hack to keep definition clear even for function
-    // which takes as parameters jus bunch of strings.
+    bool isRunning() const;
+    bool isSetup() const;
     bool open(const OpenParams &openParams);
+    bool run(const RunParams &params);
     RunParams runParams();
-    bool setup(const SetupParams &params);
 
     /** Force sample T and U measurement. */
     void sampleMeasure();
 
+    bool setup(const SetupParams &params);
     const SetupParams& setupParams() const;
-
-    bool start(const RunParams &runParams);
 
     /** Abort experiment, set it from setup/running state to open.
 
-      All devices are reset to default state. */
-    void abort();
+      All devices are reset to default state. The state is changed regardless
+      on return value, but when returns false, device status is undefined.
+      @return: if returns true no error accured, if false error occured. */
+    bool abort();
 
 private:
     /** Column identifiers for data log CSV file. */
@@ -160,9 +160,6 @@ private:
         COL_END
     } CsvLogColumns_t;
 
-    // TODO: file to save experiment settings
-    // (CSV, to catch variation during time)
-
     typedef enum {
         HP34901_CH_T1 = 105,
         HP34901_CH_T2 = 106,
@@ -181,13 +178,6 @@ private:
         HP34903_CH_I2 = 208
     } HP34903Chennels_t;
 
-    /** Current state of experiment. */
-    typedef enum {
-        STATE_STOP = 0,
-        STATE_STABILIZE,
-        STATE_COOLDOWN
-    } State_t;
-
     QCSVWriter dataLog;
     QModBus eurotherm;
     QSCPIDev hp34970;
@@ -195,13 +185,19 @@ private:
     sdp_va_t sdp_va_maximums;
 
     ExperimentError_t errorf;
-    RunParams paramsf;
-    SetupParams setupParamsf;
-    int sdpError;
 
-    State_t state;
+    /** Directory to store files with data from experiment. */
+    QDir logDir;
+
+    bool runningf;
+    RunParams runParamsf;
+    int sdpError;
+    SetupParams setupParamsf;
+    bool setupf;
+
     /** Timer for measurement. */
     QTimer timer;
+
     /** Timing for timer. */
     static const double timerDwell;
 
@@ -212,8 +208,6 @@ private:
     void doCoolDown();
     void doStabilize();
     void doStop();
-
-    void setError(ExperimentError_t error);
 
 signals:
     void fatalError(const QString &errorShort, const QString &errorLong);

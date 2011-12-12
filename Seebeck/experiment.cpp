@@ -36,9 +36,10 @@ Experiment::Experiment(QObject *parent) :
     QObject(parent),
     dataLog(COL_END),
     errorf(ERR_OK),
-    paramsf(),
+    runningf(false),
+    runParamsf(),
     sdpError(SDP_EOK),
-    state(STATE_STOP),
+    setupf(false),
     timer(this)
 {
     timer.setObjectName("timer");
@@ -48,10 +49,15 @@ Experiment::Experiment(QObject *parent) :
     QMetaObject::connectSlotsByName(this);
 }
 
-void Experiment::abort()
+bool Experiment::abort()
 {
-    sdp_set_output(&sdp, 0);
-    eurotherm.setEnabled(false);
+    bool ok(true);
+
+    setupf = runningf = false;
+    ok &= (sdp_set_output(&sdp, 0) == SDP_EOK);
+    ok &= eurotherm.setEnabled(false);
+
+    return ok;
 }
 
 bool Experiment::checkRunParams(const RunParams &params) const
@@ -63,12 +69,12 @@ bool Experiment::checkRunParams(const RunParams &params) const
 
 void Experiment::close()
 {
-    // TODO is experiment running? -> stop
+    if (setupf || runningf)
+        abort();
     timer.stop();
     sdp_close(&sdp);
     hp34970.close();
-    if (eurotherm.isOpen())
-        eurotherm.close();
+    eurotherm.close();
     dataLog.close();
 }
 
@@ -119,9 +125,9 @@ void Experiment::doStabilize()
     Ts = sqrt(Ts);
     emit furnaceTMeasured(T, Ts);
 
-    if ( fabs(T - paramsf.furnaceT) < paramsf.furnaceSettleTStraggling) {
+    if ( fabs(T - runParamsf.furnaceT) < runParamsf.furnaceSettleTStraggling) {
         furnaceStableTime += timerDwell;
-        if (furnaceStableTime < paramsf.furnaceSettleTime)
+        if (furnaceStableTime < runParamsf.furnaceSettleTime)
             return;
     }
     else {
@@ -158,7 +164,7 @@ QString Experiment::errorString() const
         s = "No error";
         break;
 
-    case ERR_INVALID_VALUE:
+    case ERR_VALUE:
         s = "Invalid parameter value";
         break;
 
@@ -189,26 +195,25 @@ QString Experiment::errorString() const
 bool Experiment::furnaceTRange(int *Tmin, int *Tmax)
 {
     if (!eurotherm.targetTRange(Tmin, Tmax)) {
-        setError(ERR_EUROTHERM);
+        errorf = ERR_EUROTHERM;
         return false;
     }
     return true;
 }
 
+bool Experiment::isRunning() const
+{
+    return runningf;
+}
+
+bool Experiment::isSetup() const
+{
+    return setupf;
+}
+
 void Experiment::on_timer_timeout()
 {
-    switch(state) {
-
-    case STATE_COOLDOWN:
-        doCoolDown(); break;
-
-    case STATE_STABILIZE:
-        doStabilize(); break;
-
-    default:
-    case STATE_STOP:
-        doStop(); break;
-    }
+    doStabilize();
 }
 
 bool Experiment::open(const OpenParams &openParams)
@@ -276,41 +281,16 @@ bool Experiment::open(const OpenParams &openParams)
 
     // TODO: setup eurotherm to defined state
 
-    QDir dataDir(openParams.dataDirName);
-    if (!dataDir.exists()) {
+    logDir.setPath(openParams.dataDirName);
+    if (!logDir.exists()) {
+        sdp_close(&sdp);
+        hp34970.close();
+        eurotherm.close();
         emit fatalError("Invalid experiment directory",
                         "Experiment data directory does not exists");
         return false;
     }
-    QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
-    QString fileName(dateStr + "_all.csv");
-    dataLog.setFileName(dataDir.absoluteFilePath(fileName));
-    if (!dataLog.open()) {
-        sdp_close(&sdp);
-        hp34970.close();
-        eurotherm.close();
-        emit fatalError("Failed to open data log file", dataLog.errorString());
-        return false;
-    }
-    dataLog[COL_TIME] = "Time\n(UTC)";
-    dataLog[COL_STATE] = "State\n";
-    dataLog[COL_FURNACE_T] = "Furnace T\n(°C)";
-    dataLog[COL_SAMPLE_HEAT_I] = "Heat I\n(A)";
-    dataLog[COL_SAMPLE_HEAT_U] = "Heat U\n(V)";
-    dataLog[COL_SAMPLE_T1] = "Sample T1\n(°C)";
-    dataLog[COL_SAMPLE_T2] = "Sample T\n(°C)";
-    dataLog[COL_SAMPLE_T3] = "Sample T\n(°C)";
-    dataLog[COL_SAMPLE_T4] = "Sample T\n(°C)";
-    dataLog[COL_SAMPLE_U12] = "Sample U12\n(V)";
-    dataLog[COL_SAMPLE_U23] = "Sample U23\n(V)";
-    dataLog[COL_SAMPLE_U34] = "Sample U34\n(V)";
-    dataLog[COL_SAMPLE_U41] = "Sample U41\n(V)";
-    dataLog[COL_SAMPLE_RES_I] = "Sample res. I\n(A)";
-    dataLog[COL_SAMPLE_RES_U] = "Sample res. U\n(V)";
-    if (!dataLog.write()) {
-        emit fatalError("CSV file write failed", "Failed to write CSV file header");
-        return false;
-    }
+
 
     // TODO: get from device
     //paramsf.furnacePower = ;
@@ -325,7 +305,7 @@ bool Experiment::open(const OpenParams &openParams)
         emit fatalError("Failed to get I form PS", sdp_strerror(sdpError));
         return false;
     }
-    paramsf.sampleHeatingI = va_data.curr;
+    runParamsf.sampleHeatingI = va_data.curr;
 
     timer.start();
 
@@ -334,10 +314,10 @@ bool Experiment::open(const OpenParams &openParams)
 
 Experiment::RunParams Experiment::runParams()
 {
-    RunParams params(paramsf);
+    RunParams params(runParamsf);
     if (!eurotherm.targetT(&params.furnaceT)) {
         // TODO
-        setError(ERR_EUROTHERM);
+        errorf = ERR_EUROTHERM;
     }
     return params;
 }
@@ -380,17 +360,45 @@ void Experiment::sampleMeasure()
     emit sampleUMeasured(U12, U23, U34, U41);
 }
 
-void Experiment::setError(ExperimentError_t error)
-{
-    errorf = error;
-}
-
 bool Experiment::setup(const SetupParams &params)
 {
     if (!params.isValid()) {
-        errorf = ERR_INVALID_VALUE;
+        errorf = ERR_VALUE;
         return false;
     }
+
+    QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
+    QString fileName(dateStr + "_all.csv");
+    dataLog.setFileName(logDir.absoluteFilePath(fileName));
+    if (!dataLog.open()) {
+        emit fatalError("Failed to open data log file", dataLog.errorString());
+        return false;
+    }
+    dataLog[COL_TIME] = "Time\n(UTC)";
+    dataLog[COL_STATE] = "State\n";
+    dataLog[COL_FURNACE_T] = "Furnace T\n(°C)";
+    dataLog[COL_SAMPLE_HEAT_I] = "Heat I\n(A)";
+    dataLog[COL_SAMPLE_HEAT_U] = "Heat U\n(V)";
+    dataLog[COL_SAMPLE_T1] = "Sample T1\n(°C)";
+    dataLog[COL_SAMPLE_T2] = "Sample T\n(°C)";
+    dataLog[COL_SAMPLE_T3] = "Sample T\n(°C)";
+    dataLog[COL_SAMPLE_T4] = "Sample T\n(°C)";
+    dataLog[COL_SAMPLE_U12] = "Sample U12\n(V)";
+    dataLog[COL_SAMPLE_U23] = "Sample U23\n(V)";
+    dataLog[COL_SAMPLE_U34] = "Sample U34\n(V)";
+    dataLog[COL_SAMPLE_U41] = "Sample U41\n(V)";
+    dataLog[COL_SAMPLE_RES_I] = "Sample res. I\n(A)";
+    dataLog[COL_SAMPLE_RES_U] = "Sample res. U\n(V)";
+    if (!dataLog.write()) {
+        emit fatalError("CSV file write failed", "Failed to write CSV file header");
+        return false;
+    }
+
+    // TODO
+    // aditional values checks
+    // set sample mesurement current (output is off)
+
+    // Open experiment log file and write header
 
     return false;
 }
@@ -400,15 +408,15 @@ const Experiment::SetupParams& Experiment::setupParams() const
     return setupParamsf;
 }
 
-bool Experiment::start(const RunParams &params)
+bool Experiment::run(const RunParams &params)
 {
     if (!checkRunParams(params)) {
-        setError(ERR_INVALID_VALUE);
+        errorf = ERR_VALUE;
         return false;
     }
 
-    state = STATE_STABILIZE;
-    this->paramsf = params;
+    this->runParamsf = params;
+
     furnaceStableTime = 0;
 
     // Create vector for moving T avarage
@@ -423,7 +431,7 @@ bool Experiment::start(const RunParams &params)
     if (!eurotherm.setTarget(params.furnaceT))
     {
         // TODO
-        setError(ERR_EUROTHERM);
+        errorf = ERR_EUROTHERM;
         //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
@@ -431,7 +439,7 @@ bool Experiment::start(const RunParams &params)
     if (!eurotherm.setEnabled(true))
     {
         // TODO
-        setError(ERR_EUROTHERM);
+        errorf = ERR_EUROTHERM;
         //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
