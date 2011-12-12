@@ -388,48 +388,64 @@ bool Experiment::setup(const SetupParams &params)
         return false;
     }
 
+    errorf = ERR_LOG_FILE;
     // TODO: write experiment log file header
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
     QString fileName(dateStr + "_seebeck.csv");
     dataLog.setFileName(logDir.absoluteFilePath(fileName));
-    if (!dataLog.open()) {
-        errorf = ERR_LOG_FILE;
+    if (!dataLog.open())
         return false;
-    }
+
+    dataLog.resize(1);
+    dataLog[0] = "Seebeck experiment measurement data log";
+    if (!dataLog.write())
+        return false;
+
     dataLog.resize(2);
-    dataLog[0] = "Seebeck experiment measurement log";
-    if (!dataLog.write()) {
-        errorf = ERR_LOG_FILE;
-        return false;
-    }
-
-    dataLog[0] = "Measured by:";
+    dataLog[0] = "Measured by";
     dataLog[1] = params.experimentator;
-    if (!dataLog.write()) {
-        errorf = ERR_LOG_FILE;
+    if (!dataLog.write())
         return false;
-    }
 
-    dataLog[0] = "Sample ID:";
+    dataLog[0] = "Sample ID";
     dataLog[1] = params.sampleId;
-    if (!dataLog.write()) {
-        errorf = ERR_LOG_FILE;
+    if (!dataLog.write())
         return false;
-    }
 
-    dataLog[0] = "Date:";
+    dataLog[0] = "Date";
     dataLog[1] = dateStr;
-    if (!dataLog.write()) {
-        errorf = ERR_LOG_FILE;
+    if (!dataLog.write())
         return false;
-    }
+
+    dataLog[0] = "sample l1";
+    dataLog[1] = params.sample.l1;
+    if (!dataLog.write())
+        return false;
+
+    dataLog[0] = "sample l2";
+    dataLog[1] = params.sample.l2;
+    if (!dataLog.write())
+        return false;
+
+    dataLog[0] = "sample l3";
+    dataLog[1] = params.sample.l3;
+    if (!dataLog.write())
+        return false;
+
+    dataLog[0] = "sample S";
+    dataLog[1] = params.sample.S;
+    if (!dataLog.write())
+        return false;
+
+    dataLog[0] = "I for resistivity meas.";
+    dataLog[1] = params.resistivityI;
+    if (!dataLog.write())
+        return false;
 
     // empty row separate header from data
     dataLog.resize(0);
-    if (!dataLog.write()) {
-        errorf = ERR_LOG_FILE;
+    if (!dataLog.write())
         return false;
-    }
 
     dataLog.resize(COL_END);
     dataLog[COL_TIME] = "Time\n(UTC)";
@@ -447,10 +463,8 @@ bool Experiment::setup(const SetupParams &params)
     dataLog[COL_SAMPLE_U41] = "Sample U41\n(V)";
     dataLog[COL_SAMPLE_RES_I] = "Sample res. I\n(A)";
     dataLog[COL_SAMPLE_RES_U] = "Sample res. U\n(V)";
-    if (!dataLog.write()) {
-        errorf = ERR_LOG_FILE;
+    if (!dataLog.write())
         return false;
-    }
 
     errorf = ERR_OK;
     setupf = true;
