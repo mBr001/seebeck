@@ -950,7 +950,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="seebeck.qrc">:/images/seebeck_pec.svg</pixmap>
+           <pixmap resource="seebeck.qrc">:/images/seebeck_pec_dia.svg</pixmap>
           </property>
          </widget>
         </item>

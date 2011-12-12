@@ -491,25 +491,25 @@ bool Experiment::run(const RunParams &params)
         return false;
     }
 
-    int sdp_ret;
+    sdpError = sdp_set_curr(&sdp, params.sampleHeatingI);
+    if (sdpError != SDP_EOK)
+        goto sdp_err;
+    sdpError = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
+    if (sdpError != SDP_EOK)
+        goto sdp_err;
+    sdpError = sdp_set_volt(&sdp, sdp_va_maximums.volt);
+    if (sdpError != SDP_EOK)
+        goto sdp_err;
+    sdpError = sdp_set_output(&sdp, 1);
+    if (sdpError != SDP_EOK)
+        goto sdp_err;
 
-    sdp_ret = sdp_set_curr(&sdp, params.sampleHeatingI);
-    if (sdp_ret != SDP_EOK)
-        goto sdp_err;
-    sdp_ret = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
-    if (sdp_ret != SDP_EOK)
-        goto sdp_err;
-    sdp_ret = sdp_set_volt(&sdp, sdp_va_maximums.volt);
-    if (sdp_ret != SDP_EOK)
-        goto sdp_err;
-    sdp_ret = sdp_set_output(&sdp, 1);
-    if (sdp_ret != SDP_EOK)
-        goto sdp_err;
+    runningf = true;
 
     return true;
 
 sdp_err:
-    emit fatalError("Failed to set up SDP PS", sdp_strerror(sdp_ret));
+    errorf = ERR_MSDP;
     abort();
 
     return false;

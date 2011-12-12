@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/images">
-        <file>seebeck_pec.svg</file>
+        <file>seebeck_pec_dia.svg</file>
     </qresource>
 </RCC>

@@ -16,7 +16,7 @@ LIBS +=  \
     -lm -lmodbus
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
     experiment.cpp \
     config.cpp \
     configui.cpp \
