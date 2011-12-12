@@ -15,12 +15,37 @@ class Experiment : public QObject
     Q_OBJECT
 public:
     typedef enum {
-        NoError = 0,
-        InvalidValueError = 1,
-        EurothermError = 2
+        ERR_OK = 0,
+        ERR_INVALID_VALUE,
+        ERR_EUROTHERM,
+        ERR_MSDP,
+        ERR_HP34970,
+        ERR_KEITHLEY
     } ExperimentError_t;
 
-    class Params_t {
+    /** Parameter used to open experiment. */
+    class OpenParams {
+    public:
+        /** Directory to store data taken during experiment. */
+        QString dataDirName;
+
+        /** Eurotherm regulator serial port name. */
+        QString eurothermPort;
+
+        /** Eurotherm ModBus slave number. */
+        int eurothermSlave;
+
+        /** HP34970 multimeter serial port name. */
+        QString hp34970Port;
+
+        /** Manson SDP power supply port name. */
+        QString msdpPort;
+
+        /** Return true if configuration values are valid. */
+        bool isValid() const;
+    };
+
+    class RunParams_t {
     public:
         /** Turn furnace power on/off. */
         bool furnaceHeatingOn;
@@ -41,7 +66,7 @@ public:
         /** Current uset for sample heating. */
         double sampleHeatingI;
 
-        Params_t() :
+        RunParams_t() :
             furnaceHeatingOn(false), furnaceT(-274),
             furnaceSettleTStraggling(-1), furnaceSettleTime(-1),
             rezistivityI(NAN), sampleHeatingI(-1)
@@ -71,7 +96,7 @@ public:
     explicit Experiment(QObject *parent = 0);
 
     void abort();
-    bool checkParams(const Params_t &params) const;
+    bool checkRunParams(const RunParams_t &runParams) const;
     void close();
     ExperimentError_t error() const;
     QString errorString() const;
@@ -80,10 +105,8 @@ public:
     // When changing prototype, change numeric suffix.
     // This is simple hack to keep definition clear even for function
     // which takes as parameters jus bunch of strings.
-    bool open_00(const QString &eurothermPort, int eurothermSlave,
-                 const QString &hp34970Port, const QString &msdpPort,
-                 const QString &dataDirName);
-    Params_t params();
+    bool open(const OpenParams &openParams);
+    RunParams_t runParams();
     bool setup();
 
     /** Force sample T and U measurement. */
@@ -92,7 +115,7 @@ public:
     const SampleParams& sampleParams() const;
     void setSampleParams(const SampleParams& val);
 
-    bool start(const Params_t &params);
+    bool start(const RunParams_t &runParams);
     void stop();
 
 private:
@@ -152,9 +175,9 @@ private:
     sdp_va_t sdp_va_maximums;
 
     ExperimentError_t errorf;
-    QString errorStringf;
-    Params_t paramsf;
+    RunParams_t paramsf;
     SampleParams sampleParamsf;
+    int sdpError;
 
     State_t state;
     /** Timer for measurement. */
@@ -170,7 +193,7 @@ private:
     void doStabilize();
     void doStop();
 
-    void setError(ExperimentError_t error, const QString &extraDescription = QString());
+    void setError(ExperimentError_t error);
 
 signals:
     void fatalError(const QString &errorShort, const QString &errorLong);

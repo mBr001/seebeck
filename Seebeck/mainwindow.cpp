@@ -89,7 +89,7 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
     if (!checked)
         return;
 
-    Experiment::Params_t params;
+    Experiment::RunParams_t params;
 
     params.furnaceHeatingOn = true;
     params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
@@ -134,17 +134,21 @@ void MainWindow::on_experiment_sampleUMeasured(double U12, double U23, double U3
 
 void MainWindow::show()
 {
-    if (!experiment.open_00(
-                config.eurothermPort(),
-                config.eurothermSlave(),
-                config.hp34970Port(),
-                config.msdpPort(),
-                config.dataDir())) {
+    Experiment::OpenParams openParams;
+
+    openParams.dataDirName = config.dataDir();
+    openParams.eurothermPort = config.eurothermPort();
+    openParams.eurothermSlave = config.eurothermSlave();
+    openParams.hp34970Port = config.hp34970Port();
+    openParams.msdpPort = config.msdpPort();
+
+    if (!experiment.open(openParams)) {
+        QMessageBox::critical(this, "Experiment open failed.", experiment.errorString());
         close();
         return;
     }
 
-    Experiment::Params_t params(experiment.params());
+    Experiment::RunParams_t params(experiment.runParams());
     ui->manualFurnaceTSpinBox->setValue(params.furnaceT);
 
     // turn experiment off -> experiment is set up at star (manual or automatic)
@@ -170,7 +174,7 @@ void MainWindow::startApp()
 
 void MainWindow::on_manualApplyFurnacePushButton_clicked()
 {
-    Experiment::Params_t params(experiment.params());
+    Experiment::RunParams_t params(experiment.runParams());
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
     params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
 
@@ -182,7 +186,7 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
 
 void MainWindow::on_manualApplySamplePushButton_clicked()
 {
-    Experiment::Params_t params(experiment.params());
+    Experiment::RunParams_t params(experiment.runParams());
     params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
     if (!experiment.start(params))
     {

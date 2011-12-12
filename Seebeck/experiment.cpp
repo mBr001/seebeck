@@ -9,6 +9,11 @@ Experiment::SampleParams::SampleParams() :
     l1(NAN), l2(NAN), l3(NAN), S(NAN)
 {}
 
+bool Experiment::OpenParams::isValid() const
+{
+    return eurothermSlave >= 1 && eurothermSlave <= 247;
+}
+
 bool Experiment::SampleParams::isValid() const
 {
     return (l1 >= 0 && isfinite(l1) &&
@@ -20,8 +25,9 @@ bool Experiment::SampleParams::isValid() const
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
     dataLog(COL_END),
-    errorf(NoError),
+    errorf(ERR_OK),
     paramsf(),
+    sdpError(SDP_EOK),
     state(STATE_STOP),
     timer(this)
 {
@@ -37,7 +43,7 @@ void Experiment::abort()
 
 }
 
-bool Experiment::checkParams(const Params_t &params) const
+bool Experiment::checkRunParams(const RunParams_t &params) const
 {
     return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
             && params.furnaceT >= -273 && params.furnaceT < 5000
@@ -68,9 +74,9 @@ void Experiment::doStabilize()
 {
     sdp_va_data_t va_data;
 
-    int ret = sdp_get_va_data(&sdp, &va_data);
-    if (ret != SDP_EOK) {
-        emit fatalError("doStabilize - sdp_get_va_data", sdp_strerror(ret));
+    sdpError = sdp_get_va_data(&sdp, &va_data);
+    if (sdpError != SDP_EOK) {
+        emit fatalError("doStabilize - sdp_get_va_data", sdp_strerror(sdpError));
         return;
     }
     emit sampleHeatingUIMeasured(va_data.curr, va_data.volt);
@@ -139,25 +145,34 @@ QString Experiment::errorString() const
     QString s;
 
     switch(errorf) {
-    case NoError:
+    case ERR_OK:
         s = "No error";
         break;
 
-    case InvalidValueError:
+    case ERR_INVALID_VALUE:
         s = "Invalid parameter value";
         break;
 
-    case EurothermError:
-        s = "Eurother operation error";
+    case ERR_EUROTHERM:
+        s = QString("Eurother operation error: ") + eurotherm.errorString();
+        break;
+
+    case ERR_MSDP:
+        s = QString("Manson SDP power sypply error: ") + sdp_strerror(sdpError);
+        break;
+
+    case ERR_HP34970:
+        s = QString("HP34970 device error:") + hp34970.errorString();
+        break;
+
+    case ERR_KEITHLEY:
+        s = QString("Keithley power supply error:") /* FIXME */;
         break;
 
     default:
-        s = "Unknown error";
+        s = "Unknown error, THIS IS WRONG.";
         break;
     }
-
-    if (!errorStringf.isEmpty())
-        s = s + " " + errorStringf;
 
     return s;
 }
@@ -165,7 +180,7 @@ QString Experiment::errorString() const
 bool Experiment::furnaceTRange(int *Tmin, int *Tmax)
 {
     if (!eurotherm.targetTRange(Tmin, Tmax)) {
-        setError(EurothermError);
+        setError(ERR_EUROTHERM);
         return false;
     }
     return true;
@@ -187,25 +202,26 @@ void Experiment::on_timer_timeout()
     }
 }
 
-bool Experiment::open_00(const QString &eurothermPort,
-                         int eurothermSlave,
-                         const QString &hp34970Port,
-                         const QString &msdpPort,
-                         const QString &dataDirName)
+bool Experiment::open(const OpenParams &openParams)
 {
-    int sdp_ret(sdp_open(&sdp, msdpPort.toLocal8Bit().constData(), SDP_DEV_ADDR_MIN));
-    if (sdp_ret != SDP_EOK) {
-        emit fatalError("SDP PS open failed", sdp_strerror(sdp_ret));
-        return false;
+    {
+        const char *portName(openParams.msdpPort.toLocal8Bit().constData());
+        sdpError = sdp_open(&sdp, portName, SDP_DEV_ADDR_MIN);
+        if (sdpError != SDP_EOK) {
+            // FIXME: do not emit error when returning value
+            emit fatalError("SDP PS open failed", sdp_strerror(sdpError));
+            return false;
+        }
     }
-    sdp_ret = sdp_get_va_maximums(&sdp, &sdp_va_maximums);
-    if (sdp_ret != SDP_EOK) {
+
+    sdpError = sdp_get_va_maximums(&sdp, &sdp_va_maximums);
+    if (sdpError != SDP_EOK) {
         sdp_close(&sdp);
-        emit fatalError("SDP PS open failed", sdp_strerror(sdp_ret));
+        emit fatalError("SDP PS open failed", sdp_strerror(sdpError));
         return false;
     }
 
-    if (!hp34970.open(hp34970Port)) {
+    if (!hp34970.open(openParams.hp34970Port)) {
         sdp_close(&sdp);
         emit fatalError("Open HP34970 failed", hp34970.errorString());
         return false;
@@ -242,7 +258,7 @@ bool Experiment::open_00(const QString &eurothermPort,
         return false;
     }
 
-    if (!eurotherm.open(eurothermPort, eurothermSlave)) {
+    if (!eurotherm.open(openParams.eurothermPort, openParams.eurothermSlave)) {
         sdp_close(&sdp);
         hp34970.close();
         emit fatalError("Failed to open Eurotherm regulator", eurotherm.errorString());
@@ -251,7 +267,12 @@ bool Experiment::open_00(const QString &eurothermPort,
 
     // TODO: setup eurotherm to defined state
 
-    QDir dataDir(dataDirName);
+    QDir dataDir(openParams.dataDirName);
+    if (!dataDir.exists()) {
+        emit fatalError("Invalid experiment directory",
+                        "Experiment data directory does not exists");
+        return false;
+    }
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
     QString fileName(dateStr + "_all.csv");
     dataLog.setFileName(dataDir.absoluteFilePath(fileName));
@@ -287,12 +308,12 @@ bool Experiment::open_00(const QString &eurothermPort,
     //paramsf.furnaceT = ;
 
     sdp_va_data_t va_data;
-    sdp_ret = sdp_get_va_data(&sdp, &va_data);
-    if (sdp_ret != SDP_EOK) {
+    sdpError = sdp_get_va_data(&sdp, &va_data);
+    if (sdpError != SDP_EOK) {
         sdp_close(&sdp);
         hp34970.close();
         eurotherm.close();
-        emit fatalError("Failed to get I form PS", sdp_strerror(sdp_ret));
+        emit fatalError("Failed to get I form PS", sdp_strerror(sdpError));
         return false;
     }
     paramsf.sampleHeatingI = va_data.curr;
@@ -302,12 +323,12 @@ bool Experiment::open_00(const QString &eurothermPort,
     return true;
 }
 
-Experiment::Params_t Experiment::params()
+Experiment::RunParams_t Experiment::runParams()
 {
-    Params_t params(paramsf);
+    RunParams_t params(paramsf);
     if (!eurotherm.targetT(&params.furnaceT)) {
         // TODO
-        setError(EurothermError);
+        setError(ERR_EUROTHERM);
     }
     return params;
 }
@@ -355,10 +376,9 @@ const Experiment::SampleParams& Experiment::sampleParams() const
     return sampleParamsf;
 }
 
-void Experiment::setError(ExperimentError_t error, const QString &extraDescription)
+void Experiment::setError(ExperimentError_t error)
 {
     errorf = error;
-    errorStringf = extraDescription;
 }
 
 
@@ -373,10 +393,10 @@ bool Experiment::setup()
     return false;
 }
 
-bool Experiment::start(const Params_t &params)
+bool Experiment::start(const RunParams_t &params)
 {
-    if (!checkParams(params)) {
-        setError(InvalidValueError);
+    if (!checkRunParams(params)) {
+        setError(ERR_INVALID_VALUE);
         return false;
     }
 
@@ -396,7 +416,7 @@ bool Experiment::start(const Params_t &params)
     if (!eurotherm.setTarget(params.furnaceT))
     {
         // TODO
-        setError(EurothermError);
+        setError(ERR_EUROTHERM);
         //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
@@ -404,7 +424,7 @@ bool Experiment::start(const Params_t &params)
     if (!eurotherm.setEnabled(true))
     {
         // TODO
-        setError(EurothermError);
+        setError(ERR_EUROTHERM);
         //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
