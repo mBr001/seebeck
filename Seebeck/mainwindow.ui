@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>796</width>
-    <height>638</height>
+    <height>651</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,6 +111,9 @@
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="decimals">
+                <number>3</number>
+               </property>
               </widget>
              </item>
              <item row="1" column="1">
@@ -120,6 +123,9 @@
                </property>
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
+               </property>
+               <property name="decimals">
+                <number>3</number>
                </property>
               </widget>
              </item>
@@ -131,6 +137,9 @@
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="decimals">
+                <number>3</number>
+               </property>
               </widget>
              </item>
              <item row="3" column="1">
@@ -140,6 +149,9 @@
                </property>
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
+               </property>
+               <property name="decimals">
+                <number>3</number>
                </property>
               </widget>
              </item>
@@ -219,6 +231,12 @@
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="specialValueText">
+                <string>N/A</string>
+               </property>
+               <property name="minimum">
+                <double>-273.160000000000025</double>
+               </property>
                <property name="maximum">
                 <double>9999.989999999999782</double>
                </property>
@@ -231,6 +249,12 @@
                </property>
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
+               </property>
+               <property name="specialValueText">
+                <string>N/A</string>
+               </property>
+               <property name="minimum">
+                <double>-273.160000000000025</double>
                </property>
                <property name="maximum">
                 <double>9999.989999999999782</double>
@@ -245,6 +269,12 @@
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
                </property>
+               <property name="specialValueText">
+                <string>N/A</string>
+               </property>
+               <property name="minimum">
+                <double>-273.160000000000025</double>
+               </property>
                <property name="maximum">
                 <double>9999.989999999999782</double>
                </property>
@@ -257,6 +287,12 @@
                </property>
                <property name="buttonSymbols">
                 <enum>QAbstractSpinBox::NoButtons</enum>
+               </property>
+               <property name="specialValueText">
+                <string>N/A</string>
+               </property>
+               <property name="minimum">
+                <double>-273.160000000000025</double>
                </property>
                <property name="maximum">
                 <double>9999.989999999999782</double>
@@ -304,7 +340,20 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="sampleRDoubleSpinBox"/>
+             <widget class="QDoubleSpinBox" name="sampleRDoubleSpinBox">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="specialValueText">
+               <string>N/A</string>
+              </property>
+              <property name="minimum">
+               <double>-0.010000000000000</double>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_78">
@@ -359,6 +408,9 @@ p, li { white-space: pre-wrap; }
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
+            <property name="specialValueText">
+             <string>N/A</string>
+            </property>
             <property name="minimum">
              <number>-274</number>
             </property>
@@ -405,8 +457,14 @@ p, li { white-space: pre-wrap; }
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
+            <property name="specialValueText">
+             <string>N/A</string>
+            </property>
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-0.010000000000000</double>
             </property>
             <property name="maximum">
              <double>9999.989999999999782</double>
@@ -444,6 +502,12 @@ p, li { white-space: pre-wrap; }
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
+            <property name="specialValueText">
+             <string>N/A</string>
+            </property>
+            <property name="minimum">
+             <double>-0.010000000000000</double>
+            </property>
            </widget>
           </item>
           <item row="0" column="2">
@@ -475,6 +539,12 @@ p, li { white-space: pre-wrap; }
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
+            <property name="specialValueText">
+             <string>N/A</string>
+            </property>
+            <property name="minimum">
+             <double>-0.010000000000000</double>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
@@ -484,6 +554,12 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="buttonSymbols">
              <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="specialValueText">
+             <string>N/A</string>
+            </property>
+            <property name="minimum">
+             <double>-0.010000000000000</double>
             </property>
             <property name="maximum">
              <double>999.990000000000009</double>
@@ -859,6 +935,9 @@ p, li { white-space: pre-wrap; }
             <widget class="QDoubleSpinBox" name="resistivityIDoubleSpinBox">
              <property name="statusTip">
               <string>Current used for sample resistivity measurement.</string>
+             </property>
+             <property name="decimals">
+              <number>3</number>
              </property>
             </widget>
            </item>

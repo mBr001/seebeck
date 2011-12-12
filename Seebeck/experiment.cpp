@@ -34,7 +34,6 @@ bool Experiment::SetupParams::isValid() const
 
 Experiment::Experiment(QObject *parent) :
     QObject(parent),
-    dataLog(COL_END),
     errorf(ERR_OK),
     runningf(false),
     sdpError(SDP_EOK),
@@ -89,8 +88,11 @@ void Experiment::doStabilize()
         return;
     }
     emit sampleHeatingUIMeasured(va_data.curr, va_data.volt);
-    dataLog[COL_SAMPLE_HEAT_I] = va_data.curr;
-    dataLog[COL_SAMPLE_HEAT_U] = va_data.volt;
+
+    if (!isSetup())
+        return;
+    //dataLog[COL_SAMPLE_HEAT_I] = va_data.curr;
+    //dataLog[COL_SAMPLE_HEAT_U] = va_data.volt;
 
     int T;
 
@@ -98,13 +100,13 @@ void Experiment::doStabilize()
         emit fatalError("doStabilize - eurotherm.currentT", eurotherm.errorString());
         return;
     }
-    dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
-    dataLog[COL_FURNACE_T] = T;
-    if (!dataLog.write()) {
+    //dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
+    //dataLog[COL_FURNACE_T] = T;
+    //if (!dataLog.write()) {
         // TODO
-        emit fatalError("TODO", "TODO");
-        return;
-    }
+    //    emit fatalError("TODO", "TODO");
+    //    return;
+    //}
 
     furnaceTvalues.push_front(T);
     furnaceTvalues.pop_back();
@@ -361,7 +363,12 @@ bool Experiment::setup(const SetupParams &params)
         return false;
     }
 
-    if (params.resistivityI > 0.05) {
+    // check if values are not out of sensible borders
+    if (params.resistivityI > 0.05 ||
+            params.sample.l1 > 0.3 ||
+            params.sample.l2 > 0.3 ||
+            params.sample.l3 > 0.3 ||
+            params.sample.S > (0.1*0.1)) {
         errorf = ERR_VALUE;
         return false;
     }
@@ -375,12 +382,13 @@ bool Experiment::setup(const SetupParams &params)
 
     // TODO: write experiment log file header
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
-    QString fileName(dateStr + "_all.csv");
+    QString fileName(dateStr + "_seebeck.csv");
     dataLog.setFileName(logDir.absoluteFilePath(fileName));
     if (!dataLog.open()) {
         errorf = ERR_LOG_FILE;
         return false;
     }
+    dataLog.resize(2);
     dataLog[0] = "Seebeck experiment measurement log";
     if (!dataLog.write()) {
         errorf = ERR_LOG_FILE;
@@ -409,10 +417,13 @@ bool Experiment::setup(const SetupParams &params)
     }
 
     // empty row separate header from data
+    dataLog.resize(0);
     if (!dataLog.write()) {
         errorf = ERR_LOG_FILE;
         return false;
     }
+
+    dataLog.resize(COL_END);
     dataLog[COL_TIME] = "Time\n(UTC)";
     dataLog[COL_STATE] = "State\n";
     dataLog[COL_FURNACE_T] = "Furnace T\n(°C)";
@@ -434,6 +445,8 @@ bool Experiment::setup(const SetupParams &params)
     }
 
     errorf = ERR_OK;
+    setupf = true;
+
     return true;
 }
 

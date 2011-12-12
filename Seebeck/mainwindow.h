@@ -45,6 +45,9 @@ private slots:
     void on_manualApplySamplePushButton_clicked();
     void on_manualStartPushButton_clicked();
     void on_sampleSPushButton_clicked();
+    void on_sampleL1DoubleSpinBox_editingFinished();
+    void on_sampleL2DoubleSpinBox_editingFinished();
+    void on_sampleL3DoubleSpinBox_editingFinished();
 };
 
 #endif // MAINWINDOW_H

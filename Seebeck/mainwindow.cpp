@@ -84,17 +84,19 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
                 return;
             }
         }
+        ui->sampleHeatingIDoubleSpinBox->setValue(-1);
+        ui->furnaceTStragglingDoubleSpinBox->setValue(-1);
     }
 
     if (!checked) {
         Experiment::SetupParams params;
 
         params.experimentator = ui->experimentatorLineEdit->text();
-        params.resistivityI = ui->resistivityIDoubleSpinBox->value();
-        params.sample.l1 = ui->sampleL1DoubleSpinBox->value();
-        params.sample.l2 = ui->sampleL2DoubleSpinBox->value();
-        params.sample.l3 = ui->sampleL3DoubleSpinBox->value();
-        params.sample.S = ui->sampleSDubleSpinBox->value();
+        params.resistivityI = ui->resistivityIDoubleSpinBox->value() / 1000.;
+        params.sample.l1 = ui->sampleL1DoubleSpinBox->value() / 1000.;
+        params.sample.l2 = ui->sampleL2DoubleSpinBox->value() / 1000.;
+        params.sample.l3 = ui->sampleL3DoubleSpinBox->value() / 1000.;
+        params.sample.S = ui->sampleSDubleSpinBox->value() / 1e6;
         params.sampleId = ui->sampleIdLineEdit->text();
 
         if (!experiment.setup(params)) {
@@ -211,4 +213,22 @@ void MainWindow::on_sampleSPushButton_clicked()
 {
     ui->sampleSDubleSpinBox->setValue(ui->sampleWidthDoubleSpinBox->value() *
                                       ui->sampleHeightDoubleSpinBox->value());
+}
+
+void MainWindow::on_sampleL1DoubleSpinBox_editingFinished()
+{
+    ui->sampleLDoubleSpinBox->setValue(
+                ui->sampleL1DoubleSpinBox->value() +
+                ui->sampleL2DoubleSpinBox->value() +
+                ui->sampleL3DoubleSpinBox->value());
+}
+
+void MainWindow::on_sampleL2DoubleSpinBox_editingFinished()
+{
+    on_sampleL1DoubleSpinBox_editingFinished();
+}
+
+void MainWindow::on_sampleL3DoubleSpinBox_editingFinished()
+{
+    on_sampleL1DoubleSpinBox_editingFinished();
 }
