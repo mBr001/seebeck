@@ -19,6 +19,7 @@ ConfigUI::ConfigUI(QWidget *parent) :
     ui->eurothermSleaveSpinBox->setValue(config.eurothermSlave());
     ui->hp34970PortComboBox->setEditText(config.hp34970Port());
     ui->msdpPortComboBox->setEditText(config.msdpPort());
+    ui->ps6220PortComboBox->setEditText(config.ps6220Port());
 }
 
 ConfigUI::~ConfigUI()
@@ -43,4 +44,5 @@ void ConfigUI::on_buttonBox_accepted()
     config.setEurothermSlave(ui->eurothermSleaveSpinBox->value());
     config.setHp34970Port(ui->hp34970PortComboBox->currentText());
     config.setMsdpPort(ui->msdpPortComboBox->currentText());
+    config.setPs6220Port(ui->ps6220PortComboBox->currentText());
 }

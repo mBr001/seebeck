@@ -148,6 +148,7 @@ void MainWindow::show()
     openParams.eurothermSlave = config.eurothermSlave();
     openParams.hp34970Port = config.hp34970Port();
     openParams.msdpPort = config.msdpPort();
+    openParams.ps6220Port = config.ps6220Port();
 
     if (!experiment.open(openParams)) {
         QMessageBox::critical(this, "Experiment open failed.", experiment.errorString());

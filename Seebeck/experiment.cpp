@@ -262,7 +262,7 @@ bool Experiment::open(const OpenParams &openParams)
         return false;
     }
 
-    if (!ps6220.open(openParams.ps6220Port)) {
+    if (!ps6220.open(openParams.ps6220Port, QSerial::Baude19200)) {
         errorf = ERR_PS6220;
         sdp_close(&sdp);
         hp34970.close();
