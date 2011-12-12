@@ -37,7 +37,7 @@ int QModBus::error() const
 
 QString QModBus::errorString() const
 {
-    return strerror(errNo);
+    return modbus_strerror(errNo);
 }
 
 bool QModBus::isOpen() const
@@ -74,18 +74,12 @@ bool QModBus::open(const QString &port, int slave)
 
 bool QModBus::setEnabled(bool enabled)
 {
+    /* In manual mode output value should be set to 0 (safe value) TODO: check. */
     if (modbus_write_register(dev, REG_IM, enabled ? REG_IM_AUTO : REG_IM_MANUAL) != 1) {
         errNo = errno;
         return false;
     }
 
-    // TODO: check: set output value to 0
-    if (!enabled) {
-       if (modbus_write_register(dev, REG_MAN_OP, 0) != 1) {
-            errNo = errno;
-            return false;
-        }
-    }
     return true;
 }
 

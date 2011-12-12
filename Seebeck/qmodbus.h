@@ -15,6 +15,8 @@ private:
         REG_TG_SP = 2,
         /** Manual output value. */
         REG_MAN_OP = 3,
+        /** Working output. */
+        REG_WRK_OP = 4,
         /** Active setpoint select: { 0 = SP1, 1 = SP2 }. */
         REG_SP_SEL = 15,
         /** Setpoint 1. */
