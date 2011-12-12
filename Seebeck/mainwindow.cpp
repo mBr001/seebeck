@@ -247,7 +247,22 @@ void MainWindow::on_manualApplySamplePushButton_clicked()
 
 void MainWindow::on_manualStartPushButton_clicked()
 {
-    experiment.sampleMeasure();
+    Experiment::RunParams params;
+
+    params.furnaceHeatingOn = true;
+    params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
+    params.furnaceSettleTStraggling = ui->manualMaxTStragglingDoubleSpinBox->value();
+    params.furnaceT = ui->manualFurnaceTSpinBox->value();
+    params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
+
+    if (!experiment.run(params)) {
+        if (experiment.error() == Experiment::ERR_VALUE) {
+            QMessageBox::critical(this, "Failed to start measurement.",
+                                  QString("Failed to start measurement: ") + experiment.errorString());
+            return;
+        }
+        on_experiment_fatalError("todo", "Todo");
+    }
 }
 
 void MainWindow::on_sampleSPushButton_clicked()

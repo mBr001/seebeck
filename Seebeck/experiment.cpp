@@ -92,6 +92,7 @@ void Experiment::doStabilize()
 
     sdpError = sdp_get_va_data(&sdp, &va_data);
     if (sdpError != SDP_EOK) {
+        errorf = ERR_MSDP;
         emit fatalError("doStabilize - sdp_get_va_data", sdp_strerror(sdpError));
         return;
     }
@@ -99,37 +100,29 @@ void Experiment::doStabilize()
 
     if (!isSetup())
         return;
-    //dataLog[COL_SAMPLE_HEAT_I] = va_data.curr;
-    //dataLog[COL_SAMPLE_HEAT_U] = va_data.volt;
 
-    int T;
+    int furnaceT;
 
-    if (!eurotherm.currentT(&T)) {
+    if (!eurotherm.currentT(&furnaceT)) {
+        errorf = ERR_EUROTHERM;
         emit fatalError("doStabilize - eurotherm.currentT", eurotherm.errorString());
         return;
     }
-    //dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
-    //dataLog[COL_FURNACE_T] = T;
-    //if (!dataLog.write()) {
-        // TODO
-    //    emit fatalError("TODO", "TODO");
-    //    return;
-    //}
 
-    furnaceTvalues.push_front(T);
+    furnaceTvalues.push_front(furnaceT);
     furnaceTvalues.pop_back();
-    double Tmean = 0.0;
-    foreach (double _T_, furnaceTvalues) { Tmean += _T_; }
-    Tmean /= (double)furnaceTvalues.size();
-    double Ts = 0.0;
-    foreach (double _T_, furnaceTvalues) {
-        double dT = _T_ - Tmean;
-        Ts += dT * dT;
+    double Tmean(0.);
+    foreach (double Tn, furnaceTvalues) { Tmean += Tn; }
+    Tmean /= double(furnaceTvalues.size());
+    double Tstraggling(0.);
+    foreach (double Tn, furnaceTvalues) {
+        double dT(Tn - Tmean);
+        Tstraggling += dT * dT;
     }
-    Ts = sqrt(Ts);
-    emit furnaceTMeasured(T, Ts);
+    Tstraggling = sqrt(Tstraggling);
+    emit furnaceTMeasured(furnaceT, Tstraggling);
 
-    if ( fabs(T - runParamsf.furnaceT) < runParamsf.furnaceSettleTStraggling) {
+    if ( fabs(furnaceT - runParamsf.furnaceT) <= runParamsf.furnaceSettleTStraggling) {
         furnaceStableTime += timerDwell;
         if (furnaceStableTime < runParamsf.furnaceSettleTime)
             return;
@@ -139,14 +132,25 @@ void Experiment::doStabilize()
         return;
     }
 
-    //QStringList values;
-    //if (!hp34970.read(&values)) {
-    //} // TODO
+    if (!isRunning())
+        return;
 
-    // parse values
-    // write to log
-    // emit signals
-    // if enought measurement done emit finished
+    // measurement aparature temperature is stable, do measurement(s)
+    dataLog[COL_SAMPLE_HEAT_I] = va_data.curr;
+    dataLog[COL_SAMPLE_HEAT_U] = va_data.volt;
+    dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
+    dataLog[COL_FURNACE_T] = furnaceT;
+    // Todo: log furnace T straggling
+
+    sampleMeasure();
+
+    if (!dataLog.write()) {
+        errorf = ERR_LOG_FILE;
+        emit fatalError("doStabilize - failed to write data", dataLog.errorString());
+        return;
+    }
+
+    runningf = false;
 }
 
 Experiment::ExperimentError_t Experiment::error() const
@@ -330,9 +334,9 @@ void Experiment::sampleMeasure()
     double U12, U23, U34, U41;
 
     QStringList values;
-    // FIXME: prijal nekompletni radek a pri timeoutu nepochybyl
+    // FIXME: prijal nekompletni radek a pri timeoutu nenahlasil chybu
     if (!hp34970.read(&values, 2000000)) {
-        // TODO
+        errorf = ERR_HP34970;
         return;
     }
     // FIXME: check for errors
@@ -477,7 +481,7 @@ const Experiment::SetupParams& Experiment::setupParams() const
     return setupParamsf;
 }
 
-bool Experiment::run(const RunParams &params)
+bool Experiment::run(const RunParams &params, int /*measurements*/)
 {
     if (!checkRunParams(params)) {
         errorf = ERR_VALUE;
@@ -499,17 +503,13 @@ bool Experiment::run(const RunParams &params)
 
     if (!eurotherm.setTarget(params.furnaceT))
     {
-        // TODO
         errorf = ERR_EUROTHERM;
-        //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
 
     if (!eurotherm.setEnabled(true))
     {
-        // TODO
         errorf = ERR_EUROTHERM;
-        //emit fatalError("Failed to set up eurotherm regulator", eurotherm.errorString());
         return false;
     }
 
@@ -532,6 +532,7 @@ bool Experiment::run(const RunParams &params)
 
 sdp_err:
     errorf = ERR_MSDP;
+    // todo emit fatalError
     abort();
 
     return false;

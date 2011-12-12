@@ -127,7 +127,7 @@ public:
     bool isRunning() const;
     bool isSetup() const;
     bool open(const OpenParams &openParams);
-    bool run(const RunParams &params);
+    bool run(const RunParams &params, int measurements = 1);
     const RunParams& runParams();
 
     /** Force sample T and U measurement. */
