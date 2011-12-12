@@ -52,8 +52,16 @@ bool Experiment::abort()
     bool ok(true);
 
     setupf = runningf = false;
-    ok &= (sdp_set_output(&sdp, 0) == SDP_EOK);
-    ok &= eurotherm.setEnabled(false);
+    sdpError = sdp_set_output(&sdp, false);
+    if (sdpError != SDP_EOK) {
+        errorf = ERR_MSDP;
+        ok = false;
+    }
+
+    if (!eurotherm.setEnabled(false)) {
+        errorf = ERR_EUROTHERM;
+        ok = false;
+    }
 
     return ok;
 }
