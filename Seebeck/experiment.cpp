@@ -5,13 +5,17 @@
 
 const double Experiment::timerDwell = 1000;
 
-Experiment::SampleParams::SampleParams() :
-    l1(NAN), l2(NAN), l3(NAN), S(NAN)
-{}
-
 bool Experiment::OpenParams::isValid() const
 {
-    return eurothermSlave >= 1 && eurothermSlave <= 247;
+    return (eurothermSlave >= 1 && eurothermSlave <= 247);
+}
+
+bool Experiment::RunParams::isValid() const
+{
+    return (furnaceSettleTime >= 0 && isfinite(furnaceSettleTime) &&
+            furnaceT >= -273 &&
+            furnaceSettleTStraggling >= 0 && isfinite(furnaceSettleTStraggling) &&
+            sampleHeatingI >= 0 && isfinite(sampleHeatingI));
 }
 
 bool Experiment::SampleParams::isValid() const
@@ -20,6 +24,12 @@ bool Experiment::SampleParams::isValid() const
             l2 > 0 && isfinite(l2) &&
             l3 >= 0 && isfinite(l3) &&
             S > 0 && isfinite(S));
+}
+
+bool Experiment::SetupParams::isValid() const
+{
+    return (sample.isValid() &&
+            resistivityI > 0 && isfinite(resistivityI));
 }
 
 Experiment::Experiment(QObject *parent) :
@@ -40,16 +50,15 @@ Experiment::Experiment(QObject *parent) :
 
 void Experiment::abort()
 {
-
+    sdp_set_output(&sdp, 0);
+    eurotherm.setEnabled(false);
 }
 
-bool Experiment::checkRunParams(const RunParams_t &params) const
+bool Experiment::checkRunParams(const RunParams &params) const
 {
-    return (params.furnaceSettleTime >= 0 && params.furnaceSettleTime < 60 * 60 * 24 * 365
-            && params.furnaceT >= -273 && params.furnaceT < 5000
-            && params.furnaceSettleTStraggling >= 0 && params.furnaceSettleTStraggling < 5000
-            && params.sampleHeatingI >= 0 && params.sampleHeatingI <= sdp_va_maximums.curr
-            && params.rezistivityI > 0);
+    return (params.isValid() &&
+            params.furnaceT <= 9999 &&
+            params.sampleHeatingI <= sdp_va_maximums.curr);
 }
 
 void Experiment::close()
@@ -323,9 +332,9 @@ bool Experiment::open(const OpenParams &openParams)
     return true;
 }
 
-Experiment::RunParams_t Experiment::runParams()
+Experiment::RunParams Experiment::runParams()
 {
-    RunParams_t params(paramsf);
+    RunParams params(paramsf);
     if (!eurotherm.targetT(&params.furnaceT)) {
         // TODO
         setError(ERR_EUROTHERM);
@@ -371,29 +380,27 @@ void Experiment::sampleMeasure()
     emit sampleUMeasured(U12, U23, U34, U41);
 }
 
-const Experiment::SampleParams& Experiment::sampleParams() const
-{
-    return sampleParamsf;
-}
-
 void Experiment::setError(ExperimentError_t error)
 {
     errorf = error;
 }
 
-
-void Experiment::setSampleParams(const SampleParams& val)
+bool Experiment::setup(const SetupParams &params)
 {
-    if (val.isValid())
-        sampleParamsf = val;
-}
+    if (!params.isValid()) {
+        errorf = ERR_INVALID_VALUE;
+        return false;
+    }
 
-bool Experiment::setup()
-{
     return false;
 }
 
-bool Experiment::start(const RunParams_t &params)
+const Experiment::SetupParams& Experiment::setupParams() const
+{
+    return setupParamsf;
+}
+
+bool Experiment::start(const RunParams &params)
 {
     if (!checkRunParams(params)) {
         setError(ERR_INVALID_VALUE);
@@ -448,13 +455,7 @@ bool Experiment::start(const RunParams_t &params)
 
 sdp_err:
     emit fatalError("Failed to set up SDP PS", sdp_strerror(sdp_ret));
-    stop();
+    abort();
 
     return false;
-}
-
-void Experiment::stop()
-{
-    sdp_set_output(&sdp, 0);
-    eurotherm.setEnabled(false);
 }

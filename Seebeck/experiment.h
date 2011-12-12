@@ -41,11 +41,13 @@ public:
         /** Manson SDP power supply port name. */
         QString msdpPort;
 
+        OpenParams() : eurothermSlave(-1) {}
+
         /** Return true if configuration values are valid. */
         bool isValid() const;
     };
 
-    class RunParams_t {
+    class RunParams {
     public:
         /** Turn furnace power on/off. */
         bool furnaceHeatingOn;
@@ -60,16 +62,15 @@ public:
           * clasicied as stedy. */
         double furnaceSettleTime;
 
-        /** Current used to measure sample rezistivity. */
-        double rezistivityI;
-
         /** Current uset for sample heating. */
         double sampleHeatingI;
 
-        RunParams_t() :
+        bool isValid() const;
+
+        RunParams() :
             furnaceHeatingOn(false), furnaceT(-274),
-            furnaceSettleTStraggling(-1), furnaceSettleTime(-1),
-            rezistivityI(NAN), sampleHeatingI(-1)
+            furnaceSettleTStraggling(NAN), furnaceSettleTime(NAN),
+            sampleHeatingI(-1)
         {}
     };
 
@@ -87,16 +88,32 @@ public:
         /** Surface of sample orthogonal to "lenght" axis. */
         double S;
 
-        SampleParams();
+        SampleParams() : l1(NAN), l2(NAN), l3(NAN), S(NAN) {}
 
         /** Check values for validity. */
         bool isValid() const;
     };
 
+    class SetupParams {
+    public:
+        /** Current used for measurement of sample resisitvity. */
+        double resistivityI;
+
+        /** Experimantator identification, just label. */
+        QString experimentator;
+
+        /** Sample parameters. */
+        SampleParams sample;
+
+        /** Sample identifier, just label. */
+        QString sampleId;
+
+        bool isValid() const;
+    };
+
     explicit Experiment(QObject *parent = 0);
 
-    void abort();
-    bool checkRunParams(const RunParams_t &runParams) const;
+    bool checkRunParams(const RunParams &runParams) const;
     void close();
     ExperimentError_t error() const;
     QString errorString() const;
@@ -106,17 +123,20 @@ public:
     // This is simple hack to keep definition clear even for function
     // which takes as parameters jus bunch of strings.
     bool open(const OpenParams &openParams);
-    RunParams_t runParams();
-    bool setup();
+    RunParams runParams();
+    bool setup(const SetupParams &params);
 
     /** Force sample T and U measurement. */
     void sampleMeasure();
 
-    const SampleParams& sampleParams() const;
-    void setSampleParams(const SampleParams& val);
+    const SetupParams& setupParams() const;
 
-    bool start(const RunParams_t &runParams);
-    void stop();
+    bool start(const RunParams &runParams);
+
+    /** Abort experiment, set it from setup/running state to open.
+
+      All devices are reset to default state. */
+    void abort();
 
 private:
     /** Column identifiers for data log CSV file. */
@@ -175,8 +195,8 @@ private:
     sdp_va_t sdp_va_maximums;
 
     ExperimentError_t errorf;
-    RunParams_t paramsf;
-    SampleParams sampleParamsf;
+    RunParams paramsf;
+    SetupParams setupParamsf;
     int sdpError;
 
     State_t state;

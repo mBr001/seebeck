@@ -528,7 +528,7 @@ p, li { white-space: pre-wrap; }
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="settingsTab">
        <attribute name="title">
         <string>Common settings</string>
        </attribute>

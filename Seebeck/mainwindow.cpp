@@ -89,7 +89,7 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
     if (!checked)
         return;
 
-    Experiment::RunParams_t params;
+    Experiment::RunParams params;
 
     params.furnaceHeatingOn = true;
     params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
@@ -106,7 +106,9 @@ void MainWindow::on_experimentManualRadioButton_toggled(bool checked)
 void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
 {
     if (checked)
-        experiment.stop();
+        experiment.abort();
+    ui->settingsOtherGroupBox->setEnabled(checked);
+    ui->settingsSampleGroupBox->setEnabled(checked);
 }
 
 void MainWindow::on_experiment_sampleHeatingUIMeasured(double I, double U)
@@ -148,7 +150,7 @@ void MainWindow::show()
         return;
     }
 
-    Experiment::RunParams_t params(experiment.runParams());
+    Experiment::RunParams params(experiment.runParams());
     ui->manualFurnaceTSpinBox->setValue(params.furnaceT);
 
     // turn experiment off -> experiment is set up at star (manual or automatic)
@@ -174,7 +176,7 @@ void MainWindow::startApp()
 
 void MainWindow::on_manualApplyFurnacePushButton_clicked()
 {
-    Experiment::RunParams_t params(experiment.runParams());
+    Experiment::RunParams params(experiment.runParams());
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
     params.furnaceSettleTime = ui->manualSettleTimeSpinBox->value();
 
@@ -186,7 +188,7 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
 
 void MainWindow::on_manualApplySamplePushButton_clicked()
 {
-    Experiment::RunParams_t params(experiment.runParams());
+    Experiment::RunParams params(experiment.runParams());
     params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
     if (!experiment.start(params))
     {
