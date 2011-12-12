@@ -122,6 +122,16 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
             on_experiment_fatalError(errTitle, errTitle + ": " + experiment.errorString());
             return;
         }
+
+        config.setExperimentator(params.experimentator);
+        config.setResistivity_I(params.resistivityI);
+        config.setSample_h(ui->sampleHeightDoubleSpinBox->value() / 1000.);
+        config.setSample_l1(params.sample.l1);
+        config.setSample_l2(params.sample.l2);
+        config.setSample_l3(params.sample.l3);
+        config.setSample_S(params.sample.S);
+        config.setSample_w(ui->sampleWidthDoubleSpinBox->value() / 1000.);
+        on_sampleL1DoubleSpinBox_editingFinished();
     }
 
     ui->automatedTab->setEnabled(ui->experimentAutoRadioButton->isChecked());
@@ -185,6 +195,15 @@ void MainWindow::show()
     ui->manualFurnaceTSpinBox->setRange(Tmin, Tmax);
     ui->autoMeasFromSpinBox->setRange(Tmin, Tmax);
     ui->autoMeasToSpinBox->setRange(Tmin, Tmax);
+
+    ui->experimentatorLineEdit->setText(config.experimentator());
+    ui->resistivityIDoubleSpinBox->setValue(config.resistivity_I() * 1000.);
+    ui->sampleHeightDoubleSpinBox->setValue(config.sample_h()* 1000.);
+    ui->sampleL1DoubleSpinBox->setValue(config.sample_l1()* 1000.);
+    ui->sampleL2DoubleSpinBox->setValue(config.sample_l2()* 1000.);
+    ui->sampleL3DoubleSpinBox->setValue(config.sample_l3()* 1000.);
+    ui->sampleSDubleSpinBox->setValue(config.sample_S()* 1e6);
+    ui->sampleWidthDoubleSpinBox->setValue(config.sample_w() * 1000.);
 
     QWidget::show();
 }

@@ -17,7 +17,7 @@ public:
     QString msdpPort();
     double resistivity_I();
     double sample_h();
-    double sample_1();
+    double sample_l1();
     double sample_l2();
     double sample_l3();
     double sample_S();

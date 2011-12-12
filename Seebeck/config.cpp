@@ -65,7 +65,7 @@ double Config::sample_h()
     return settings.value(str_sample_h).toDouble();
 }
 
-double Config::sample_1()
+double Config::sample_l1()
 {
     return settings.value(str_sample_l1).toDouble();
 }
