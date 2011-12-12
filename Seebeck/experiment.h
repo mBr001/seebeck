@@ -20,7 +20,8 @@ public:
         ERR_EUROTHERM,
         ERR_MSDP,
         ERR_HP34970,
-        ERR_KEITHLEY
+        ERR_PS6220,
+        ERR_LOG_FILE
     } ExperimentError_t;
 
     /** Parameter used to open experiment. */
@@ -40,6 +41,9 @@ public:
 
         /** Manson SDP power supply port name. */
         QString msdpPort;
+
+        /** Keithley PS 6220 precision current source port name. */
+        QString ps6220Port;
 
         OpenParams() : eurothermSlave(-1) {}
 
@@ -123,7 +127,7 @@ public:
     bool isSetup() const;
     bool open(const OpenParams &openParams);
     bool run(const RunParams &params);
-    RunParams runParams();
+    const RunParams& runParams();
 
     /** Force sample T and U measurement. */
     void sampleMeasure();
@@ -181,6 +185,7 @@ private:
     QCSVWriter dataLog;
     QModBus eurotherm;
     QSCPIDev hp34970;
+    QSCPIDev ps6220;
     sdp_t sdp;
     sdp_va_t sdp_va_maximums;
 

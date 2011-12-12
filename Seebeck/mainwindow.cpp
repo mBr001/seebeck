@@ -79,8 +79,9 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
     if (checked) {
         if (experiment.isRunning() || experiment.isSetup()) {
             if (!experiment.abort()) {
-                on_experiment_fatalError("Failed to interrupt experiment",
+                on_experiment_fatalError("Failed to stop experiment",
                                          experiment.errorString());
+                return;
             }
         }
     }
@@ -101,12 +102,13 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
 
             if (experiment.error() == Experiment::ERR_VALUE) {
                 QMessageBox::critical(this, errTitle, experiment.errorString());
+                ui->experimentOffRadioButton->setChecked(true);
                 return;
             }
             on_experiment_fatalError(errTitle, experiment.errorString());
+            return;
         }
     }
-
 
     ui->automatedTab->setEnabled(ui->experimentAutoRadioButton->isChecked());
     ui->manualTab->setEnabled(ui->experimentManualRadioButton->isChecked());

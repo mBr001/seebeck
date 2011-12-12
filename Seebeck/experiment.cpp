@@ -37,7 +37,6 @@ Experiment::Experiment(QObject *parent) :
     dataLog(COL_END),
     errorf(ERR_OK),
     runningf(false),
-    runParamsf(),
     sdpError(SDP_EOK),
     setupf(false),
     timer(this)
@@ -73,15 +72,10 @@ void Experiment::close()
         abort();
     timer.stop();
     sdp_close(&sdp);
+    ps6220.close();
     hp34970.close();
     eurotherm.close();
     dataLog.close();
-}
-
-void Experiment::doCoolDown()
-{
-    // set target to lovest posible/defined
-    // report furnace and sample T
 }
 
 // TODO: co s chybama?
@@ -145,11 +139,6 @@ void Experiment::doStabilize()
     // if enought measurement done emit finished
 }
 
-void Experiment::doStop()
-{
-// abort experiment go to cooldown?
-}
-
 Experiment::ExperimentError_t Experiment::error() const
 {
     return errorf;
@@ -157,39 +146,38 @@ Experiment::ExperimentError_t Experiment::error() const
 
 QString Experiment::errorString() const
 {
-    QString s;
-
     switch(errorf) {
     case ERR_OK:
-        s = "No error";
-        break;
+        return "No error";
 
     case ERR_VALUE:
-        s = "Invalid parameter value";
+        return "Invalid parameter value";
         break;
 
     case ERR_EUROTHERM:
-        s = QString("Eurother operation error: ") + eurotherm.errorString();
+        return QString("Eurother operation error: ") + eurotherm.errorString();
         break;
 
     case ERR_MSDP:
-        s = QString("Manson SDP power sypply error: ") + sdp_strerror(sdpError);
+        return QString("Manson SDP power sypply error: ") + sdp_strerror(sdpError);
         break;
 
     case ERR_HP34970:
-        s = QString("HP34970 device error:") + hp34970.errorString();
+        return QString("HP34970 device error: ") + hp34970.errorString();
         break;
 
-    case ERR_KEITHLEY:
-        s = QString("Keithley power supply error:") /* FIXME */;
+    case ERR_PS6220:
+        return QString("Keithley power supply error: ") + ps6220.errorString();
+        break;
+
+    case ERR_LOG_FILE:
+        return QString("Data logging failed: ") + dataLog.errorString();
         break;
 
     default:
-        s = "Unknown error, THIS IS WRONG.";
+        return "Unknown error, THIS IS WRONG.";
         break;
     }
-
-    return s;
 }
 
 bool Experiment::furnaceTRange(int *Tmin, int *Tmax)
@@ -272,9 +260,17 @@ bool Experiment::open(const OpenParams &openParams)
         return false;
     }
 
+    if (!ps6220.open(openParams.ps6220Port)) {
+        sdp_close(&sdp);
+        hp34970.close();
+        emit fatalError("Keithley PS 6220 open failed", ps6220.errorString());
+        return false;
+    }
+
     if (!eurotherm.open(openParams.eurothermPort, openParams.eurothermSlave)) {
         sdp_close(&sdp);
         hp34970.close();
+        ps6220.close();
         emit fatalError("Failed to open Eurotherm regulator", eurotherm.errorString());
         return false;
     }
@@ -285,12 +281,12 @@ bool Experiment::open(const OpenParams &openParams)
     if (!logDir.exists()) {
         sdp_close(&sdp);
         hp34970.close();
+        ps6220.close();
         eurotherm.close();
         emit fatalError("Invalid experiment directory",
                         "Experiment data directory does not exists");
         return false;
     }
-
 
     // TODO: get from device
     //paramsf.furnacePower = ;
@@ -301,6 +297,7 @@ bool Experiment::open(const OpenParams &openParams)
     if (sdpError != SDP_EOK) {
         sdp_close(&sdp);
         hp34970.close();
+        ps6220.close();
         eurotherm.close();
         emit fatalError("Failed to get I form PS", sdp_strerror(sdpError));
         return false;
@@ -312,14 +309,9 @@ bool Experiment::open(const OpenParams &openParams)
     return true;
 }
 
-Experiment::RunParams Experiment::runParams()
+const Experiment::RunParams& Experiment::runParams()
 {
-    RunParams params(runParamsf);
-    if (!eurotherm.targetT(&params.furnaceT)) {
-        // TODO
-        errorf = ERR_EUROTHERM;
-    }
-    return params;
+    return runParamsf;
 }
 
 void Experiment::sampleMeasure()
@@ -358,6 +350,8 @@ void Experiment::sampleMeasure()
     dataLog[COL_SAMPLE_U41] = U41;
 
     emit sampleUMeasured(U12, U23, U34, U41);
+
+    // TODO: measure resistivity
 }
 
 bool Experiment::setup(const SetupParams &params)
@@ -367,11 +361,56 @@ bool Experiment::setup(const SetupParams &params)
         return false;
     }
 
+    if (params.resistivityI > 0.05) {
+        errorf = ERR_VALUE;
+        return false;
+    }
+
+    setupParamsf = params;
+
+    if (!ps6220.setCurrent(params.resistivityI)) {
+        errorf = ERR_PS6220;
+        return false;
+    }
+
+    // TODO: write experiment log file header
     QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
     QString fileName(dateStr + "_all.csv");
     dataLog.setFileName(logDir.absoluteFilePath(fileName));
     if (!dataLog.open()) {
-        emit fatalError("Failed to open data log file", dataLog.errorString());
+        errorf = ERR_LOG_FILE;
+        return false;
+    }
+    dataLog[0] = "Seebeck experiment measurement log";
+    if (!dataLog.write()) {
+        errorf = ERR_LOG_FILE;
+        return false;
+    }
+
+    dataLog[0] = "Measured by:";
+    dataLog[1] = params.experimentator;
+    if (!dataLog.write()) {
+        errorf = ERR_LOG_FILE;
+        return false;
+    }
+
+    dataLog[0] = "Sample ID:";
+    dataLog[1] = params.sampleId;
+    if (!dataLog.write()) {
+        errorf = ERR_LOG_FILE;
+        return false;
+    }
+
+    dataLog[0] = "Date:";
+    dataLog[1] = dateStr;
+    if (!dataLog.write()) {
+        errorf = ERR_LOG_FILE;
+        return false;
+    }
+
+    // empty row separate header from data
+    if (!dataLog.write()) {
+        errorf = ERR_LOG_FILE;
         return false;
     }
     dataLog[COL_TIME] = "Time\n(UTC)";
@@ -390,17 +429,12 @@ bool Experiment::setup(const SetupParams &params)
     dataLog[COL_SAMPLE_RES_I] = "Sample res. I\n(A)";
     dataLog[COL_SAMPLE_RES_U] = "Sample res. U\n(V)";
     if (!dataLog.write()) {
-        emit fatalError("CSV file write failed", "Failed to write CSV file header");
+        errorf = ERR_LOG_FILE;
         return false;
     }
 
-    // TODO
-    // aditional values checks
-    // set sample mesurement current (output is off)
-
-    // Open experiment log file and write header
-
-    return false;
+    errorf = ERR_OK;
+    return true;
 }
 
 const Experiment::SetupParams& Experiment::setupParams() const
