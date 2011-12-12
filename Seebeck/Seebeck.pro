@@ -35,3 +35,6 @@ OTHER_FILES += \
     ../README \
     ../INSTALL.txt \
     seebeck_pec.dia
+
+RESOURCES += \
+    seebeck.qrc

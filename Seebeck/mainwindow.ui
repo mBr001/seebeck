@@ -638,7 +638,7 @@ p, li { white-space: pre-wrap; }
     <item row="0" column="1">
      <widget class="QTabWidget" name="sampleTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="settingsTab">
        <attribute name="title">
@@ -950,7 +950,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>seebeck_pec.svg</pixmap>
+           <pixmap resource="seebeck.qrc">:/images/seebeck_pec.svg</pixmap>
           </property>
          </widget>
         </item>
@@ -1616,6 +1616,17 @@ p, li { white-space: pre-wrap; }
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -1673,6 +1684,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>manualCountSpinBox</tabstop>
   <tabstop>manualStartPushButton</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="seebeck.qrc"/>
+ </resources>
  <connections/>
 </ui>
