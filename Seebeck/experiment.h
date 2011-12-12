@@ -21,7 +21,8 @@ public:
         ERR_MSDP,
         ERR_HP34970,
         ERR_PS6220,
-        ERR_LOG_FILE
+        ERR_LOG_FILE,
+        ERR_DIR_NOT_EXISTS
     } ExperimentError_t;
 
     /** Parameter used to open experiment. */

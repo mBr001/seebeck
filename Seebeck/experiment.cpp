@@ -174,6 +174,9 @@ QString Experiment::errorString() const
         return QString("Data logging failed: ") + dataLog.errorString();
         break;
 
+    case ERR_DIR_NOT_EXISTS:
+        return QString("Data log directory does not exists");
+
     default:
         return "Unknown error, THIS IS WRONG.";
         break;
@@ -210,22 +213,21 @@ bool Experiment::open(const OpenParams &openParams)
         const char *portName(openParams.msdpPort.toLocal8Bit().constData());
         sdpError = sdp_open(&sdp, portName, SDP_DEV_ADDR_MIN);
         if (sdpError != SDP_EOK) {
-            // FIXME: do not emit error when returning value
-            emit fatalError("SDP PS open failed", sdp_strerror(sdpError));
+            errorf = ERR_MSDP;
             return false;
         }
     }
 
     sdpError = sdp_get_va_maximums(&sdp, &sdp_va_maximums);
     if (sdpError != SDP_EOK) {
+        errorf = ERR_MSDP;
         sdp_close(&sdp);
-        emit fatalError("SDP PS open failed", sdp_strerror(sdpError));
         return false;
     }
 
     if (!hp34970.open(openParams.hp34970Port)) {
+        errorf = ERR_HP34970;
         sdp_close(&sdp);
-        emit fatalError("Open HP34970 failed", hp34970.errorString());
         return false;
     }
 
@@ -240,34 +242,35 @@ bool Experiment::open(const OpenParams &openParams)
     channels.push_back(HP34901_CH_U32);
     channels.push_back(HP34901_CH_U12);
     if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4))) {
+        errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("HP34970 T setup failed", hp34970.errorString());
         return false;
     }
 
     if (!hp34970.setSense(QSCPIDev::SenseVolt, channels.mid(4, 4))) {
+        errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("HP34970 U setup failed", hp34970.errorString());
         return false;
     }
 
     if (!hp34970.setScan(channels)) {
+        errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("HP34970 setup scan list", hp34970.errorString());
         return false;
     }
 
     if (!ps6220.open(openParams.ps6220Port)) {
+        errorf = ERR_PS6220;
         sdp_close(&sdp);
         hp34970.close();
-        emit fatalError("Keithley PS 6220 open failed", ps6220.errorString());
         return false;
     }
 
     if (!eurotherm.open(openParams.eurothermPort, openParams.eurothermSlave)) {
+        errorf = ERR_EUROTHERM;
         sdp_close(&sdp);
         hp34970.close();
         ps6220.close();
@@ -279,22 +282,19 @@ bool Experiment::open(const OpenParams &openParams)
 
     logDir.setPath(openParams.dataDirName);
     if (!logDir.exists()) {
+        errorf = ERR_DIR_NOT_EXISTS;
         sdp_close(&sdp);
         hp34970.close();
         ps6220.close();
         eurotherm.close();
-        emit fatalError("Invalid experiment directory",
-                        "Experiment data directory does not exists");
+
         return false;
     }
-
-    // TODO: get from device
-    //paramsf.furnacePower = ;
-    //paramsf.furnaceT = ;
 
     sdp_va_data_t va_data;
     sdpError = sdp_get_va_data(&sdp, &va_data);
     if (sdpError != SDP_EOK) {
+        errorf = ERR_MSDP;
         sdp_close(&sdp);
         hp34970.close();
         ps6220.close();
