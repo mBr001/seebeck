@@ -244,7 +244,6 @@ bool Experiment::open(const OpenParams &openParams)
     }
 
     QSCPIDev::Channels_t channels;
-
     channels.push_back(HP34901_CH_T1);
     channels.push_back(HP34901_CH_T2);
     channels.push_back(HP34901_CH_T3);
@@ -253,6 +252,7 @@ bool Experiment::open(const OpenParams &openParams)
     channels.push_back(HP34901_CH_U43);
     channels.push_back(HP34901_CH_U32);
     channels.push_back(HP34901_CH_U12);
+    channels.push_back(HP34901_CH_RES);
     if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4))) {
         errorf = ERR_HP34970;
         sdp_close(&sdp);
@@ -260,14 +260,14 @@ bool Experiment::open(const OpenParams &openParams)
         return false;
     }
 
-    if (!hp34970.setSense(QSCPIDev::SenseVolt, channels.mid(4, 4))) {
+    if (!hp34970.setSense(QSCPIDev::SenseVolt, channels.mid(4, 5))) {
         errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
         return false;
     }
 
-    if (!hp34970.setScan(channels)) {
+    if (!hp34970.setRoute(QSCPIDev::Channels_t())) {
         errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
@@ -278,6 +278,11 @@ bool Experiment::open(const OpenParams &openParams)
         errorf = ERR_PS6220;
         sdp_close(&sdp);
         hp34970.close();
+        return false;
+    }
+
+    if (!ps6220.setOutput(false)) {
+        errorf = ERR_PS6220;
         return false;
     }
 
@@ -331,10 +336,27 @@ void Experiment::sampleMeasure()
     double T1, T2, T3, T4;
     double U12, U23, U34, U41;
 
+    QSCPIDev::Channels_t channels;
+    channels.push_back(HP34901_CH_T1);
+    channels.push_back(HP34901_CH_T2);
+    channels.push_back(HP34901_CH_T3);
+    channels.push_back(HP34901_CH_T4);
+    channels.push_back(HP34901_CH_U14);
+    channels.push_back(HP34901_CH_U43);
+    channels.push_back(HP34901_CH_U32);
+    channels.push_back(HP34901_CH_U12);
+
+    if (!hp34970.setScan(channels)) {
+        errorf = ERR_HP34970;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
     QStringList values;
     // FIXME: prijal nekompletni radek a pri timeoutu nenahlasil chybu
     if (!hp34970.read(&values, 2000000)) {
         errorf = ERR_HP34970;
+        emit fatalError("todo", "todo");
         return;
     }
     // FIXME: check for errors
@@ -363,7 +385,63 @@ void Experiment::sampleMeasure()
 
     emit sampleUMeasured(U12, U23, U34, U41);
 
-    // TODO: measure resistivity
+    if (!ps6220.setCurrent(setupParamsf.resistivityI)) {
+        errorf = ERR_PS6220;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
+    if (!ps6220.setOutput(true)) {
+        errorf = ERR_PS6220;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
+    channels.clear();
+    channels.push_back(HP34903_CH_I1);
+    channels.push_back(HP34903_CH_I2);
+    if (!hp34970.setRoute(channels)) {
+        errorf = ERR_HP34970;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
+    if (!hp34970.setScan(HP34901_CH_RES)) {
+        errorf = ERR_HP34970;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
+    if (!hp34970.read(&values)) {
+        errorf = ERR_HP34970;
+        emit fatalError("todo", "todo");
+        return;
+    }
+    double resU1(QVariant(values[0]).toDouble());
+    dataLog[COL_SAMPLE_RES_U_FORWARD] = resU1;
+
+    if (!ps6220.setCurrent(-setupParamsf.resistivityI)) {
+        errorf = ERR_PS6220;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
+    if (!hp34970.read(&values)) {
+        errorf = ERR_HP34970;
+        emit fatalError("todo", "todo");
+        return;
+    }
+    double resU2(QVariant(values[0]).toDouble());
+    dataLog[COL_SAMPLE_RES_U_BACKWARD] = resU2;
+
+    if (!ps6220.setOutput(false)) {
+        errorf = ERR_PS6220;
+        emit fatalError("todo", "todo");
+        return;
+    }
+
+    double l(setupParamsf.sample.l1 + setupParamsf.sample.l2 + setupParamsf.sample.l3);
+    emit sampleRMeasured(fabs(resU1-resU2) / setupParamsf.resistivityI / setupParamsf.sample.S * l);
 }
 
 bool Experiment::setup(const SetupParams &params)
@@ -384,11 +462,6 @@ bool Experiment::setup(const SetupParams &params)
     }
 
     setupParamsf = params;
-
-    if (!ps6220.setCurrent(params.resistivityI)) {
-        errorf = ERR_PS6220;
-        return false;
-    }
 
     errorf = ERR_LOG_FILE;
     QString dateStr(QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
@@ -462,8 +535,8 @@ bool Experiment::setup(const SetupParams &params)
     dataLog[COL_SAMPLE_U23] = "Sample U23\n(V)";
     dataLog[COL_SAMPLE_U34] = "Sample U34\n(V)";
     dataLog[COL_SAMPLE_U41] = "Sample U41\n(V)";
-    dataLog[COL_SAMPLE_RES_I] = "Sample res. I\n(A)";
-    dataLog[COL_SAMPLE_RES_U] = "Sample res. U\n(V)";
+    dataLog[COL_SAMPLE_RES_U_FORWARD] = "Sample res. U forw.\n(V)";
+    dataLog[COL_SAMPLE_RES_U_BACKWARD] = "Sample res. U back.\n(V)";
     if (!dataLog.write())
         return false;
 

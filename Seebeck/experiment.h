@@ -160,9 +160,9 @@ private:
         COL_SAMPLE_U23,
         COL_SAMPLE_U34,
         COL_SAMPLE_U41,
-        COL_SAMPLE_RES_I,
-        COL_SAMPLE_RES_U,
-        // not a real column, define number of columns
+        COL_SAMPLE_RES_U_FORWARD,
+        COL_SAMPLE_RES_U_BACKWARD,
+        // not a real column, define total number of columns
         COL_END
     } CsvLogColumns_t;
 
@@ -176,7 +176,7 @@ private:
         HP34901_CH_U32 = 111, // 32 ? 23
         HP34901_CH_U12 = 112, // 21 ? 12
         HP34901_CH_XXX = 113,
-        HP34901_CH_R = 114
+        HP34901_CH_RES = 114
     } HP34901Channels_t;
 
     typedef enum {
@@ -227,6 +227,7 @@ signals:
 
     void sampleTMeasured(double T1, double T2, double T3, double T4);
     void sampleUMeasured(double U12, double U23, double U34, double U41);
+    void sampleRMeasured(double R);
 
 private slots:
     void on_timer_timeout();
