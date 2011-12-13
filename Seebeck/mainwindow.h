@@ -41,8 +41,7 @@ private slots:
     void on_experiment_sampleTMeasured(double T1, double T2, double T3, double T4);
     void on_experiment_sampleUMeasured(double U12, double U23, double U34, double U41);
     void on_experimentOffRadioButton_toggled(bool checked);
-    void on_manualApplyFurnacePushButton_clicked();
-    void on_manualApplySamplePushButton_clicked();
+    void on_manualApplyPushButton_clicked();
     void on_manualStartPushButton_clicked();
     void on_sampleSPushButton_clicked();
     void on_sampleL1DoubleSpinBox_editingFinished();

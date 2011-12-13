@@ -212,9 +212,7 @@ private:
     int furnaceStableTime;
     QVector<double> furnaceTvalues;
 
-    void doCoolDown();
     void doStabilize();
-    void doStop();
 
 signals:
     void fatalError(const QString &errorShort, const QString &errorLong);

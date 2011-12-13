@@ -214,7 +214,7 @@ void MainWindow::startApp()
     configUI.show();
 }
 
-void MainWindow::on_manualApplyFurnacePushButton_clicked()
+void MainWindow::on_manualApplyPushButton_clicked()
 {
     Experiment::RunParams params(experiment.runParams());
 
@@ -224,7 +224,7 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
     params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
 
-    if (!experiment.run(params))
+    if (!experiment.run(params, 0))
     {
         if (experiment.error() == Experiment::ERR_VALUE) {
             QMessageBox::warning(this, "Failed to set values.",
@@ -232,17 +232,6 @@ void MainWindow::on_manualApplyFurnacePushButton_clicked()
             return;
         }
         on_experiment_fatalError("Failed to start experiment", experiment.errorString());
-    }
-}
-
-void MainWindow::on_manualApplySamplePushButton_clicked()
-{
-    Experiment::RunParams params(experiment.runParams());
-    params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
-    if (!experiment.run(params))
-    {
-        on_experiment_fatalError("Failed to start experiment",
-                                 "Failed to start experiment: " + experiment.errorString());
     }
 }
 
@@ -256,7 +245,7 @@ void MainWindow::on_manualStartPushButton_clicked()
     params.furnaceT = ui->manualFurnaceTSpinBox->value();
     params.sampleHeatingI = ui->manualSampleIDoubleSpinBox->value();
 
-    if (!experiment.run(params)) {
+    if (!experiment.run(params, ui->manualMeasCountSpinBox->value())) {
         if (experiment.error() == Experiment::ERR_VALUE) {
             QMessageBox::critical(this, "Failed to start measurement.",
                                   QString("Failed to start measurement: ") + experiment.errorString());

@@ -85,7 +85,6 @@ void Experiment::close()
     dataLog.close();
 }
 
-// TODO: co s chybama?
 void Experiment::doStabilize()
 {
     sdp_va_data_t va_data;
@@ -138,7 +137,6 @@ void Experiment::doStabilize()
     dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
     dataLog[COL_FURNACE_T] = furnaceT;
     dataLog[COL_FURNACE_T_STRAGGLING] = Tstraggling;
-    // Todo: log furnace T straggling
 
     sampleMeasure();
 
@@ -480,18 +478,18 @@ const Experiment::SetupParams& Experiment::setupParams() const
     return setupParamsf;
 }
 
-bool Experiment::run(const RunParams &params, int /*measurements*/)
+// TODO support multiple measurements (current only 0 and 1)
+bool Experiment::run(const RunParams &params, int measurements)
 {
     if (!checkRunParams(params)) {
         errorf = ERR_VALUE;
         return false;
     }
 
-    this->runParamsf = params;
-
-    furnaceStableTime = 0;
-
+    if (params.furnaceSettleTime != runParamsf.furnaceSettleTime)
     {
+        furnaceStableTime = 0;
+
         // Create vector for moving T avarage
         double period = 1000. / timerDwell;
         int n(period * params.furnaceSettleTime);
@@ -501,30 +499,42 @@ bool Experiment::run(const RunParams &params, int /*measurements*/)
             furnaceTvalues.resize(n);
     }
 
-    errorf = ERR_EUROTHERM;
+    if (params.furnaceT != runParamsf.furnaceT ||
+            params.furnaceHeatingOn != runParamsf.furnaceHeatingOn) {
+        errorf = ERR_EUROTHERM;
+        furnaceStableTime = 0;
 
-    if (!eurotherm.setTarget(params.furnaceT))
-        return false;
+        if (params.furnaceHeatingOn) {
+            if (!eurotherm.setTarget(params.furnaceT))
+                return false;
+        }
 
-    if (!eurotherm.setEnabled(true))
-        return false;
+        if (!eurotherm.setEnabled(params.furnaceHeatingOn))
+            return false;
+    }
 
-    errorf = ERR_MSDP;
+    if (params.sampleHeatingI != runParamsf.sampleHeatingI) {
+        errorf = ERR_MSDP;
+        furnaceStableTime = 0;
 
-    sdpError = sdp_set_curr(&sdp, params.sampleHeatingI);
-    if (sdpError != SDP_EOK)
-        return false;
-    sdpError = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
-    if (sdpError != SDP_EOK)
-        return false;
-    sdpError = sdp_set_volt(&sdp, sdp_va_maximums.volt);
-    if (sdpError != SDP_EOK)
-        return false;
-    sdpError = sdp_set_output(&sdp, 1);
-    if (sdpError != SDP_EOK)
-        return false;
+        sdpError = sdp_set_curr(&sdp, params.sampleHeatingI);
+        if (sdpError != SDP_EOK)
+            return false;
+        // todo move this into setup
+        sdpError = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
+        if (sdpError != SDP_EOK)
+            return false;
+        sdpError = sdp_set_volt(&sdp, sdp_va_maximums.volt);
+        if (sdpError != SDP_EOK)
+            return false;
+        sdpError = sdp_set_output(&sdp, 1);
+        if (sdpError != SDP_EOK)
+            return false;
+    }
 
-    runningf = true;
+    this->runParamsf = params;
+    if (measurements > 0)
+        runningf = true;
 
     errorf = ERR_OK;
     return true;

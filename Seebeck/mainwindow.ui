@@ -638,7 +638,7 @@ p, li { white-space: pre-wrap; }
     <item row="0" column="1">
      <widget class="QTabWidget" name="sampleTabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="settingsTab">
        <attribute name="title">
@@ -1076,13 +1076,6 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QPushButton" name="manualApplyFurnacePushButton">
-             <property name="text">
-              <string>Apply</string>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_79">
              <property name="text">
@@ -1153,13 +1146,6 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="manualApplySamplePushButton">
-             <property name="text">
-              <string>Apply</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
         </item>
@@ -1170,7 +1156,7 @@ p, li { white-space: pre-wrap; }
           </property>
           <layout class="QGridLayout" name="gridLayout_17">
            <item row="0" column="1">
-            <widget class="QSpinBox" name="manualCountSpinBox">
+            <widget class="QSpinBox" name="manualMeasCountSpinBox">
              <property name="minimum">
               <number>1</number>
              </property>
@@ -1221,6 +1207,13 @@ p, li { white-space: pre-wrap; }
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QPushButton" name="manualApplyPushButton">
+          <property name="text">
+           <string>Apply</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1657,12 +1650,10 @@ p, li { white-space: pre-wrap; }
   <tabstop>sampleSDubleSpinBox</tabstop>
   <tabstop>manualFurnaceTSpinBox</tabstop>
   <tabstop>manualSettleTimeSpinBox</tabstop>
-  <tabstop>manualApplyFurnacePushButton</tabstop>
   <tabstop>manualModeCurrentRadioButton</tabstop>
   <tabstop>manualModePowerRadioButton</tabstop>
   <tabstop>manualSampleIDoubleSpinBox</tabstop>
   <tabstop>manualSamplePDoubleSpinBox</tabstop>
-  <tabstop>manualApplySamplePushButton</tabstop>
   <tabstop>autoMeasFromSpinBox</tabstop>
   <tabstop>autoMeasToSpinBox</tabstop>
   <tabstop>autoMeasStepSpinBox</tabstop>
@@ -1681,7 +1672,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>autoMeasElapsedTimeEdit</tabstop>
   <tabstop>spinBox_2</tabstop>
   <tabstop>autoMeasStartPushButton</tabstop>
-  <tabstop>manualCountSpinBox</tabstop>
+  <tabstop>manualMeasCountSpinBox</tabstop>
   <tabstop>manualStartPushButton</tabstop>
  </tabstops>
  <resources>
