@@ -148,7 +148,7 @@ void Experiment::doStabilize()
 
     runningf = false;
 
-    // TODO emit runCompleted()
+    emit runCompleted();
 }
 
 Experiment::ExperimentError_t Experiment::error() const

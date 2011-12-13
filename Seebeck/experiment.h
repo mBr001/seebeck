@@ -216,11 +216,12 @@ private:
 
 signals:
     void fatalError(const QString &errorShort, const QString &errorLong);
-    /** Called at end of experiment, after completion all measurements. */
-    void finished();
 
     /** Emited when T of furnace is measured. */
     void furnaceTMeasured(int T, double Tstraggling);
+
+    /** Emited when run of experiment succesfully completed. */
+    void runCompleted();
 
     /** Emited after process I and U of sample back heating is measured. */
     void sampleHeatingUIMeasured(double I, double U);
