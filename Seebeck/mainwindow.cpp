@@ -90,6 +90,7 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
         ui->sampleHeatingIDoubleSpinBox->setValue(-1);
         ui->sampleHeatingPDoubleSpinBox->setValue(-1);
         ui->sampleHeatingUDoubleSpinBox->setValue(-1);
+        ui->sampleRDoubleSpinBox->setValue(-1);
         ui->sampleT1DoubleSpinBox->setValue(-274.);
         ui->sampleT2DoubleSpinBox->setValue(-274.);
         ui->sampleT3DoubleSpinBox->setValue(-274.);
