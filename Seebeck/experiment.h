@@ -149,6 +149,7 @@ private:
         COL_TIME = 0,
         COL_STATE,
         COL_FURNACE_T,
+        COL_FURNACE_T_STRAGGLING,
         COL_SAMPLE_HEAT_I,
         COL_SAMPLE_HEAT_U,
         COL_SAMPLE_T1,
@@ -209,7 +210,7 @@ private:
 
     /** The period during which furnace temperature is stable. */
     int furnaceStableTime;
-    QList<double> furnaceTvalues;
+    QVector<double> furnaceTvalues;
 
     void doCoolDown();
     void doStabilize();

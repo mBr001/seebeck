@@ -111,18 +111,15 @@ void Experiment::doStabilize()
 
     furnaceTvalues.push_front(furnaceT);
     furnaceTvalues.pop_back();
-    double Tmean(0.);
-    foreach (double Tn, furnaceTvalues) { Tmean += Tn; }
-    Tmean /= double(furnaceTvalues.size());
     double Tstraggling(0.);
     foreach (double Tn, furnaceTvalues) {
-        double dT(Tn - Tmean);
+        double dT(Tn - runParamsf.furnaceT);
         Tstraggling += dT * dT;
     }
     Tstraggling = sqrt(Tstraggling);
     emit furnaceTMeasured(furnaceT, Tstraggling);
 
-    if ( fabs(furnaceT - runParamsf.furnaceT) <= runParamsf.furnaceSettleTStraggling) {
+    if ( Tstraggling <= runParamsf.furnaceSettleTStraggling) {
         furnaceStableTime += timerDwell;
         if (furnaceStableTime < runParamsf.furnaceSettleTime)
             return;
@@ -140,6 +137,7 @@ void Experiment::doStabilize()
     dataLog[COL_SAMPLE_HEAT_U] = va_data.volt;
     dataLog[COL_TIME] = QDateTime::currentDateTimeUtc();
     dataLog[COL_FURNACE_T] = furnaceT;
+    dataLog[COL_FURNACE_T_STRAGGLING] = Tstraggling;
     // Todo: log furnace T straggling
 
     sampleMeasure();
@@ -151,6 +149,8 @@ void Experiment::doStabilize()
     }
 
     runningf = false;
+
+    // TODO emit runCompleted()
 }
 
 Experiment::ExperimentError_t Experiment::error() const
@@ -491,48 +491,41 @@ bool Experiment::run(const RunParams &params, int /*measurements*/)
 
     furnaceStableTime = 0;
 
-    // Create vector for moving T avarage
-    double period = 1000. / timerDwell;
-    while(furnaceTvalues.size() > (period * params.furnaceSettleTime)) {
-        furnaceTvalues.pop_back();
+    {
+        // Create vector for moving T avarage
+        double period = 1000. / timerDwell;
+        int n(period * params.furnaceSettleTime);
+        if (furnaceTvalues.size() < n)
+            furnaceTvalues.insert(furnaceTvalues.size(), n - furnaceTvalues.size(), -274.);
+        else
+            furnaceTvalues.resize(n);
     }
-    while(furnaceTvalues.size() <= (period * params.furnaceSettleTime)) {
-        furnaceTvalues.push_back(0.0);
-    }
+
+    errorf = ERR_EUROTHERM;
 
     if (!eurotherm.setTarget(params.furnaceT))
-    {
-        errorf = ERR_EUROTHERM;
         return false;
-    }
 
     if (!eurotherm.setEnabled(true))
-    {
-        errorf = ERR_EUROTHERM;
         return false;
-    }
+
+    errorf = ERR_MSDP;
 
     sdpError = sdp_set_curr(&sdp, params.sampleHeatingI);
     if (sdpError != SDP_EOK)
-        goto sdp_err;
+        return false;
     sdpError = sdp_set_volt_limit(&sdp, sdp_va_maximums.volt);
     if (sdpError != SDP_EOK)
-        goto sdp_err;
+        return false;
     sdpError = sdp_set_volt(&sdp, sdp_va_maximums.volt);
     if (sdpError != SDP_EOK)
-        goto sdp_err;
+        return false;
     sdpError = sdp_set_output(&sdp, 1);
     if (sdpError != SDP_EOK)
-        goto sdp_err;
+        return false;
 
     runningf = true;
 
+    errorf = ERR_OK;
     return true;
-
-sdp_err:
-    errorf = ERR_MSDP;
-    // todo emit fatalError
-    abort();
-
-    return false;
 }
