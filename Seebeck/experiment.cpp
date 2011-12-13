@@ -393,8 +393,7 @@ bool Experiment::setup(const SetupParams &params)
     }
 
     errorf = ERR_LOG_FILE;
-    // TODO: write experiment log file header
-    QString dateStr(QDateTime::currentDateTime().toString(Qt::ISODate));
+    QString dateStr(QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
     QString fileName(dateStr + "_seebeck.csv");
     dataLog.setFileName(logDir.absoluteFilePath(fileName));
     if (!dataLog.open())
@@ -416,37 +415,37 @@ bool Experiment::setup(const SetupParams &params)
     if (!dataLog.write())
         return false;
 
-    dataLog[0] = "Date";
+    dataLog[0] = "Date (UTC)";
     dataLog[1] = dateStr;
     if (!dataLog.write())
         return false;
 
-    dataLog[0] = "sample l1";
+    dataLog[0] = "sample l1 [m]";
     dataLog[1] = params.sample.l1;
     if (!dataLog.write())
         return false;
 
-    dataLog[0] = "sample l2";
+    dataLog[0] = "sample l2 [m]";
     dataLog[1] = params.sample.l2;
     if (!dataLog.write())
         return false;
 
-    dataLog[0] = "sample l3";
+    dataLog[0] = "sample l3 [m]";
     dataLog[1] = params.sample.l3;
     if (!dataLog.write())
         return false;
 
-    dataLog[0] = "sample S";
+    dataLog[0] = "sample S [m^2]";
     dataLog[1] = params.sample.S;
     if (!dataLog.write())
         return false;
 
-    dataLog[0] = "I for resistivity meas.";
+    dataLog[0] = "I for resistivity meas. [A]";
     dataLog[1] = params.resistivityI;
     if (!dataLog.write())
         return false;
 
-    // empty row separate header from data
+    // empty row separate document header from data
     dataLog.resize(0);
     if (!dataLog.write())
         return false;
