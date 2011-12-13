@@ -148,6 +148,11 @@ void MainWindow::on_experiment_sampleHeatingUIMeasured(double I, double U)
     ui->sampleHeatingPDoubleSpinBox->setValue(I*U);
 }
 
+void MainWindow::on_experiment_sampleRMeasured(double R)
+{
+    ui->sampleRDoubleSpinBox->setValue(R);
+}
+
 void MainWindow::on_experiment_sampleTMeasured(double T1, double T2, double T3, double T4)
 {
     ui->sampleT1DoubleSpinBox->setValue(T1);
