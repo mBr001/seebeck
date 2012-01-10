@@ -253,7 +253,11 @@ bool Experiment::open(const OpenParams &openParams)
     channels.push_back(HP34901_CH_U32);
     channels.push_back(HP34901_CH_U12);
     channels.push_back(HP34901_CH_RES);
-    if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4))) {
+    QStringList params;
+    // TODO: sould be in configuration hot hardcoded
+    params.append("TC");
+    params.append("S");
+    if (!hp34970.setSense(QSCPIDev::SenseTemp, channels.mid(0, 4), params)) {
         errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
