@@ -13,6 +13,7 @@ ConfigUI::ConfigUI(QWidget *parent) :
     ui->eurothermPortComboBox->addItems(ports);
     ui->hp34970PortComboBox->addItems(ports);
     ui->msdpPortComboBox->addItems(ports);
+    ui->ps6220PortComboBox->addItems(ports);
 
     ui->dataDirLineEdit->setText(config.dataDir());
     ui->eurothermPortComboBox->setEditText(config.eurothermPort());
