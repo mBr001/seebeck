@@ -267,7 +267,7 @@ bool Experiment::open(const OpenParams &openParams)
         return false;
     }
 
-    if (!hp34970.setRoute(QSCPIDev::Channels_t())) {
+    if (!hp34970.setRoute(QSCPIDev::Channels_t(), HP34901_CH_MIN, HP34901_CH_MAX)) {
         errorf = ERR_HP34970;
         sdp_close(&sdp);
         hp34970.close();
@@ -400,7 +400,7 @@ void Experiment::sampleMeasure()
     channels.clear();
     channels.push_back(HP34903_CH_I1);
     channels.push_back(HP34903_CH_I2);
-    if (!hp34970.setRoute(channels)) {
+    if (!hp34970.setRoute(channels, HP34903_CH_MIN, HP34903_CH_MAX)) {
         errorf = ERR_HP34970;
         emit fatalError("todo", "todo");
         return;

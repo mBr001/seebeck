@@ -167,6 +167,7 @@ private:
     } CsvLogColumns_t;
 
     typedef enum {
+        HP34901_CH_MIN = 101,
         HP34901_CH_T1 = 105,
         HP34901_CH_T2 = 106,
         HP34901_CH_T3 = 107,
@@ -176,12 +177,15 @@ private:
         HP34901_CH_U32 = 111, // 32 ? 23
         HP34901_CH_U12 = 112, // 21 ? 12
         HP34901_CH_XXX = 113,
-        HP34901_CH_RES = 114
+        HP34901_CH_RES = 114,
+        HP34901_CH_MAX = 114
     } HP34901Channels_t;
 
     typedef enum {
+        HP34903_CH_MIN = 201,
         HP34903_CH_I1 = 207,
-        HP34903_CH_I2 = 208
+        HP34903_CH_I2 = 208,
+        HP34903_CH_MAX = 208
     } HP34903Chennels_t;
 
     QCSVWriter dataLog;
