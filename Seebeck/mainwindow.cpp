@@ -141,11 +141,29 @@ void MainWindow::on_experimentOffRadioButton_toggled(bool checked)
     ui->settingsSampleGroupBox->setEnabled(checked);
 }
 
+void MainWindow::on_experiment_runCompleted()
+{
+    if (ui->experimentAutoRadioButton->isChecked()) {
+        ui->automatedTab->setEnabled(true);
+
+        return;
+    }
+
+    if (ui->experimentManualRadioButton->isChecked()) {
+        ui->manualTab->setEnabled(true);
+    }
+}
+
 void MainWindow::on_experiment_sampleHeatingUIMeasured(double I, double U)
 {
     ui->sampleHeatingIDoubleSpinBox->setValue(I);
     ui->sampleHeatingUDoubleSpinBox->setValue(U);
     ui->sampleHeatingPDoubleSpinBox->setValue(I*U);
+}
+
+void MainWindow::on_experiment_sampleRMeasured(double R)
+{
+    ui->sampleRDoubleSpinBox->setValue(R);
 }
 
 void MainWindow::on_experiment_sampleTMeasured(double T1, double T2, double T3, double T4)
@@ -253,6 +271,8 @@ void MainWindow::on_manualStartPushButton_clicked()
         }
         on_experiment_fatalError("todo", "Todo");
     }
+
+    ui->manualTab->setEnabled(false);
 }
 
 void MainWindow::on_sampleSPushButton_clicked()
