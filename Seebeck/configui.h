@@ -18,9 +18,8 @@ public:
     ~ConfigUI();
 
 private slots:
-    void on_toolButton_clicked();
-
     void on_buttonBox_accepted();
+    void on_dataDirToolButton_clicked();
 
 private:
     Config config;

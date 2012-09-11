@@ -27,16 +27,6 @@ ConfigUI::~ConfigUI()
     delete ui;
 }
 
-void ConfigUI::on_toolButton_clicked()
-{
-    QString dirName = QFileDialog::getExistingDirectory(
-                this, "Directory to store experiment progress logs.");
-    if (dirName.isEmpty())
-        return;
-
-    ui->dataDirLineEdit->setText(dirName);
-}
-
 void ConfigUI::on_buttonBox_accepted()
 {
     config.setDataDir(ui->dataDirLineEdit->text());
@@ -45,4 +35,14 @@ void ConfigUI::on_buttonBox_accepted()
     config.setHp34970Port(ui->hp34970PortComboBox->currentText());
     config.setMsdpPort(ui->msdpPortComboBox->currentText());
     config.setPs6220Port(ui->ps6220PortComboBox->currentText());
+}
+
+void ConfigUI::on_dataDirToolButton_clicked()
+{
+    QString dirName = QFileDialog::getExistingDirectory(
+                this, "Directory to store experiment progress logs.");
+    if (dirName.isEmpty())
+        return;
+
+    ui->dataDirLineEdit->setText(dirName);
 }
