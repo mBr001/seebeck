@@ -17,8 +17,10 @@ public:
     explicit ConfigUI(QWidget *parent = 0);
     ~ConfigUI();
 
+public slots:
+    virtual void accept();
+
 private slots:
-    void on_buttonBox_accepted();
     void on_dataDirToolButton_clicked();
 
 private:
