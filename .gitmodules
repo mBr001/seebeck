@@ -7,3 +7,6 @@
 [submodule "msdptool"]
 	path = msdptool
 	url = git@github.com:pinkavaj/msdptool.git
+[submodule "QSerialPortProbe"]
+	path = QSerialPortProbe
+	url = ./QSerialPortProbe

@@ -13,6 +13,7 @@ LIBS +=  \
     -L../msdptool/build -lmsdptool \
     -L../QCSVWriter -lQCSVWriter \
     -L../QSCPIDev -lQSCPIDev \
+    -L../QSerialPortProbe -lQSerialPortProbe \
     -lm -lmodbus
 
 SOURCES += main.cpp\

@@ -4,4 +4,5 @@ SUBDIRS += \
     msdptool \
     QCSVWriter \
     QSCPIDev \
-    Seebeck
+    Seebeck \
+    QSerialPortProbe
