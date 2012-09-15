@@ -78,26 +78,27 @@ void ConfigUI::on_detectPushButton_clicked()
     ui->detectPushButton->setVisible(false);
     ui->devicesTableWidget->setVisible(true);
 
-    on_detectPushButton_clicked();
+    on_devicesRefreshToolButton_clicked();
 }
 
 void ConfigUI::on_devicesRefreshToolButton_clicked()
 {
     ui->devicesTableWidget->setRowCount(0);
-     const QSerialPortProbe::DeviceList &devices = probe.list();
-     ui->devicesTableWidget->setRowCount(devices.size());
+    probe.detect();
+    const QSerialPortProbe::DeviceList &devices = probe.list();
+    ui->devicesTableWidget->setRowCount(devices.size());
 
-     for (int row(0); row < devices.size(); ++row) {
-         const QSerialPortProbe::Device &device(devices[row]);
-         QTableWidgetItem *item;
+    for (int row(0); row < devices.size(); ++row) {
+        const QSerialPortProbe::Device &device(devices[row]);
+        QTableWidgetItem *item;
 
-         item = new QTableWidgetItem(device.port());
-         ui->devicesTableWidget->setItem(row, 0, item);
+        item = new QTableWidgetItem(device.port());
+        ui->devicesTableWidget->setItem(row, 0, item);
 
-         item = new QTableWidgetItem(device.protocolString());
-         ui->devicesTableWidget->setItem(row, 1, item);
+        item = new QTableWidgetItem(device.protocolString());
+        ui->devicesTableWidget->setItem(row, 1, item);
 
-         item = new QTableWidgetItem(device.deviceName());
-         ui->devicesTableWidget->setItem(row, 2, item);
-     }
+        item = new QTableWidgetItem(device.deviceName());
+        ui->devicesTableWidget->setItem(row, 2, item);
+    }
 }
