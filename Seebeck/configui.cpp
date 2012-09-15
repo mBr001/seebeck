@@ -87,20 +87,17 @@ void ConfigUI::on_devicesRefreshToolButton_clicked()
      const QSerialPortProbe::DeviceList &devices = probe.list();
      ui->devicesTableWidget->setRowCount(devices.size());
 
-     int row(0);
-     for (QSerialPortProbe::DeviceList::ConstIterator i(devices.begin());
-                                                        i != devices.end();
-                                                        ++i) {
+     for (int row(0); row < devices.size(); ++row) {
+         const QSerialPortProbe::Device &device(devices[row]);
          QTableWidgetItem *item;
 
-         item = new QTableWidgetItem(i->port());
+         item = new QTableWidgetItem(device.port());
          ui->devicesTableWidget->setItem(row, 0, item);
 
-         item = new QTableWidgetItem(i->protocolString());
+         item = new QTableWidgetItem(device.protocolString());
          ui->devicesTableWidget->setItem(row, 1, item);
 
-         item = new QTableWidgetItem(i->deviceName());
+         item = new QTableWidgetItem(device.deviceName());
          ui->devicesTableWidget->setItem(row, 2, item);
-         ++row;
      }
 }
