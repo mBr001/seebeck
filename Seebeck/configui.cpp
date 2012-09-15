@@ -22,6 +22,11 @@ ConfigUI::ConfigUI(QWidget *parent) :
     ui->hp34970PortComboBox->setEditText(config.hp34970Port());
     ui->msdpPortComboBox->setEditText(config.msdpPort());
     ui->ps6220PortComboBox->setEditText(config.ps6220Port());
+
+    ui->devicesTableWidget->setVisible(false);
+    QSize s(size());
+    s.setHeight(0);
+    resize(s);
 }
 
 ConfigUI::~ConfigUI()
@@ -66,4 +71,34 @@ void ConfigUI::on_dataDirToolButton_clicked()
         return;
 
     ui->dataDirLineEdit->setText(dirName);
+}
+
+void ConfigUI::on_detectPushButton_clicked()
+{
+    ui->detectPushButton->setVisible(false);
+    ui->devicesTableWidget->setVisible(true);
+
+    ui->devicesTableWidget->setRowCount(0);
+    const QSerialPortProbe::DeviceList &devices = probe.list();
+    ui->devicesTableWidget->setRowCount(devices.size());
+
+    int row(0);
+    for (QSerialPortProbe::DeviceList::ConstIterator i(devices.begin());
+                                                       i != devices.end();
+                                                       ++i) {
+        QTableWidgetItem *item;
+
+        item = new QTableWidgetItem(i->port());
+        ui->devicesTableWidget->setItem(row, 0, item);
+
+        item = new QTableWidgetItem(i->protocolString());
+        ui->devicesTableWidget->setItem(row, 1, item);
+
+        item = new QTableWidgetItem(i->deviceName());
+        ui->devicesTableWidget->setItem(row, 2, item);
+        ++row;
+    }
+
+
+
 }

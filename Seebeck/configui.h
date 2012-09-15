@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "config.h"
+#include "../QSerialPortProbe/qserialportprobe.h"
 
 namespace Ui {
     class ConfigUI;
@@ -22,9 +23,11 @@ public slots:
 
 private slots:
     void on_dataDirToolButton_clicked();
+    void on_detectPushButton_clicked();
 
 private:
     Config config;
+    QSerialPortProbe probe;
     Ui::ConfigUI *ui;
 };
 
