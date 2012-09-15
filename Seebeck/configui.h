@@ -25,6 +25,8 @@ private slots:
     void on_dataDirToolButton_clicked();
     void on_detectPushButton_clicked();
 
+    void on_devicesRefreshToolButton_clicked();
+
 private:
     Config config;
     QSerialPortProbe probe;
