@@ -5,4 +5,5 @@ SUBDIRS += \
     QCSVWriter \
     QSCPIDev \
     QSerialPortProbe \
+    modbus-eurotherm \
     Seebeck

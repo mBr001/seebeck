@@ -290,7 +290,8 @@ bool Experiment::open(const OpenParams &openParams)
         return false;
     }
 
-    if (!eurotherm.open(openParams.eurothermPort, openParams.eurothermSlave)) {
+    const char* port_s = openParams.eurothermPort.toLocal8Bit().constData();
+    if (!eurotherm.open(port_s, openParams.eurothermSlave)) {
         errorf = ERR_EUROTHERM;
         sdp_close(&sdp);
         hp34970.close();

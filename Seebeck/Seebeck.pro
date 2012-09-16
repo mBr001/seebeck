@@ -10,6 +10,7 @@ TARGET = Seebeck
 TEMPLATE = app
 
 LIBS +=  \
+    -L ../modbus-eurotherm -lmodbus-eurotherm \
     -L../msdptool/build -lmsdptool \
     -L../QCSVWriter -lQCSVWriter \
     -L../QSCPIDev -lQSCPIDev \
@@ -20,14 +21,12 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     experiment.cpp \
     config.cpp \
-    configui.cpp \
-    qmodbus.cpp
+    configui.cpp
 
 HEADERS  += mainwindow.h \
     experiment.h \
     config.h \
-    configui.h \
-    qmodbus.h
+    configui.h
 
 FORMS    += mainwindow.ui \
     configui.ui

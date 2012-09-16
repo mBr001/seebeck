@@ -8,7 +8,7 @@
 #include "../msdptool/src/include/msdp2xxx.h"
 #include "../QSCPIDev/qscpidev.h"
 #include "../QCSVWriter/qcsvwriter.h"
-#include "qmodbus.h"
+#include "../modbus-eurotherm/eurotherm.h"
 
 class Experiment : public QObject
 {
@@ -189,7 +189,7 @@ private:
     } HP34903Chennels_t;
 
     QCSVWriter dataLog;
-    QModBus eurotherm;
+    Eurotherm eurotherm;
     QSCPIDev hp34970;
     QSCPIDev ps6220;
     sdp_t sdp;
