@@ -23,7 +23,6 @@ ConfigUI::ConfigUI(QWidget *parent) :
     ui->msdpPortComboBox->setEditText(config.msdpPort());
     ui->ps6220PortComboBox->setEditText(config.ps6220Port());
 
-    ui->devicesTableWidget->setVisible(false);
     QSize s(size());
     s.setHeight(0);
     resize(s);
@@ -75,10 +74,10 @@ void ConfigUI::on_dataDirToolButton_clicked()
 
 void ConfigUI::on_detectPushButton_clicked()
 {
-    ui->detectPushButton->setVisible(false);
-    ui->devicesTableWidget->setVisible(true);
+    ui->detectPushButton->setText("Detecting");
 
     on_devicesRefreshToolButton_clicked();
+    ui->detectDevicesStackedWidget->setCurrentIndex(1);
 }
 
 void ConfigUI::on_devicesRefreshToolButton_clicked()

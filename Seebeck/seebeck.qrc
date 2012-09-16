@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file>seebeck_pec_dia.svg</file>
+        <file>images/view-refresh.png</file>
     </qresource>
 </RCC>
