@@ -12,4 +12,4 @@
 	url = git@github.com:pinkavaj/QSerialPortProbe.git
 [submodule "modbus-eurotherm"]
 	path = modbus-eurotherm
-	url = ./modbus-eurotherm
+	url = git@github.com:pinkavaj/modbus-eurotherm.git
