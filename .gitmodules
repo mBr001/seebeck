@@ -10,3 +10,6 @@
 [submodule "QSerialPortProbe"]
 	path = QSerialPortProbe
 	url = git@github.com:pinkavaj/QSerialPortProbe.git
+[submodule "modbus-eurotherm"]
+	path = modbus-eurotherm
+	url = ./modbus-eurotherm
